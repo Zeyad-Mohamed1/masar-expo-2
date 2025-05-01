@@ -12,11 +12,11 @@ const DeveloperCard = ({
   handleDeveloperClick,
 }: DeveloperCardProps) => {
   return (
-    <div
-      className="group overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm transition-all hover:border-base hover:shadow-md"
-      onClick={() => handleDeveloperClick(developer.name)}
-    >
-      <div className="relative h-44 w-full overflow-hidden bg-gray-50">
+    <div className="group overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
+      <div
+        className="relative h-44 w-full cursor-pointer overflow-hidden bg-gray-50"
+        onClick={() => handleDeveloperClick(developer.name)}
+      >
         {developer.logo ? (
           <Image
             src={developer.logo}
@@ -33,21 +33,24 @@ const DeveloperCard = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
       <div className="p-5">
-        <h2 className="mb-4 border-l-4 border-base pl-2 text-lg font-semibold text-gray-900">
+        <h2
+          onClick={() => handleDeveloperClick(developer.name)}
+          className="mb-4 cursor-pointer border-r-4 border-base pr-2 text-lg font-semibold text-gray-900"
+        >
           {developer.name}
         </h2>
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-sm text-gray-700">
-            <Mail className="h-4 w-4 text-base/70" />
+            <Mail className="h-4 w-4 text-base" />
             <span className="truncate">{developer.email}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-700">
-            <Phone className="h-4 w-4 text-base/70" />
+            <Phone className="h-4 w-4 text-base" />
             <span>{developer.phone}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-700">
-            <Eye className="h-4 w-4 text-base/70" />
-            <span>عدد المشاهدات : {developer.count}</span>
+            <Eye className="h-4 w-4 text-base" />
+            <span>عدد الحضور : {developer.count}</span>
           </div>
         </div>
         <div className="mt-4 min-h-10 border-t border-gray-100 pt-4">
@@ -56,7 +59,10 @@ const DeveloperCard = ({
           </p>
         </div>
         <div className="mt-5">
-          <button className="w-full rounded-md bg-gray-900 py-2 text-sm font-medium text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-base focus:ring-offset-1">
+          <button
+            onClick={() => handleDeveloperClick(developer.name)}
+            className="w-full cursor-pointer rounded-md bg-gray-900 py-2 text-sm font-medium text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-base focus:ring-offset-1"
+          >
             عرض التفاصيل
           </button>
         </div>

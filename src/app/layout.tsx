@@ -22,7 +22,7 @@ export default function RootLayout({
         <AuthProvider>
           <ClientProvider>
             <Navbar />
-            <main className="mx-auto max-w-screen-2xl">{children}</main>
+            <main className="mx-auto max-w-[90%]">{children}</main>
             <Toaster position="top-center" />
           </ClientProvider>
         </AuthProvider>
