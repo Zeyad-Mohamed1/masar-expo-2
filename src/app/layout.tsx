@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body>
+      <body className="antialiased">
         <AuthProvider>
           <ClientProvider>
             <Navbar />

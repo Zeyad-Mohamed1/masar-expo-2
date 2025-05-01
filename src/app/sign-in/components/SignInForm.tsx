@@ -29,7 +29,7 @@ export default function SignInForm() {
     setError("");
 
     if (!email || !password) {
-      setError("Please enter both email and password");
+      setError("يرجى إدخال البريد الإلكتروني وكلمة المرور");
       return;
     }
 
@@ -44,8 +44,8 @@ export default function SignInForm() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
-        setStoreError("Authentication failed");
+        setError("البريد الإلكتروني أو كلمة المرور غير متطابقة");
+        setStoreError("فشل التحقق");
         return;
       }
 
@@ -53,7 +53,7 @@ export default function SignInForm() {
       await useUserStore.getState().checkAuth();
 
       // Redirect to callback URL or home
-      router.push(callbackUrl);
+      router.push("/dashboard");
       router.refresh();
     } catch (error) {
       setError("An error occurred. Please try again.");
@@ -83,7 +83,7 @@ export default function SignInForm() {
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
           >
-            Email address
+            البريد الإلكتروني
           </label>
           <input
             id="email"
@@ -93,7 +93,7 @@ export default function SignInForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            placeholder="Email"
+            placeholder="البريد الإلكتروني"
           />
         </div>
         <div>
@@ -101,7 +101,7 @@ export default function SignInForm() {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
           >
-            Password
+            كلمة المرور
           </label>
           <input
             id="password"
@@ -111,7 +111,7 @@ export default function SignInForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            placeholder="Password"
+            placeholder="كلمة المرور"
           />
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function SignInForm() {
           disabled={isLoading}
           className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
         >
-          {isLoading ? "Signing in..." : "Sign in"}
+          {isLoading ? "يتم تسجيل الدخول..." : "تسجيل الدخول"}
         </button>
       </div>
     </form>

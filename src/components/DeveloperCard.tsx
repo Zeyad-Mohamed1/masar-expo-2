@@ -1,17 +1,6 @@
-import { getToken } from "@/app/actions";
-import useStreamCall from "@/hooks/useStreamCall";
 import { Developer } from "@prisma/client";
-import { StreamClient } from "@stream-io/node-sdk";
-import {
-  Call,
-  StreamCall,
-  StreamVideoClient,
-  useCallStateHooks,
-} from "@stream-io/video-react-sdk";
 import { Mail, Phone, Eye, Building } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
-import { useState } from "react";
 
 interface DeveloperCardProps {
   developer: Developer;
@@ -24,54 +13,54 @@ const DeveloperCard = ({
 }: DeveloperCardProps) => {
   return (
     <div
-      className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:border-yellow-500 hover:shadow-xl"
+      className="hover:border-base group overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md"
       onClick={() => handleDeveloperClick(developer.name)}
     >
-      <div className="relative h-48 w-full overflow-hidden">
+      <div className="relative h-44 w-full overflow-hidden bg-gray-50">
         {developer.logo ? (
           <Image
             src={developer.logo}
             alt={developer.name}
             width={400}
             height={300}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 text-gray-400">
-            <Building className="h-16 w-16 text-gray-300" />
+          <div className="flex h-full w-full items-center justify-center bg-gray-50">
+            <Building className="text-base/40 h-14 w-14" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
       <div className="p-5">
-        <h2 className="mb-3 text-xl font-bold text-yellow-800">
+        <h2 className="border-base mb-4 border-l-4 pl-2 text-lg font-semibold text-gray-900">
           {developer.name}
         </h2>
-        <div className="space-y-2">
-          <p className="flex items-center text-sm text-gray-600">
-            <Mail className="ml-2 h-4 w-4 text-yellow-600" />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-sm text-gray-700">
+            <Mail className="text-base/70 h-4 w-4" />
             <span className="truncate">{developer.email}</span>
-          </p>
-          <p className="flex items-center text-sm text-gray-600">
-            <Phone className="ml-2 h-4 w-4 text-yellow-600" />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-700">
+            <Phone className="text-base/70 h-4 w-4" />
             <span>{developer.phone}</span>
-          </p>
-          <p className="flex items-center text-sm text-gray-600">
-            <Eye className="ml-2 h-4 w-4 text-yellow-600" />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-700">
+            <Eye className="text-base/70 h-4 w-4" />
             <span>عدد المشاهدات : {developer.count}</span>
-          </p>
+          </div>
         </div>
         {developer.description && (
-          <div className="mt-3 border-t border-gray-100 pt-3">
+          <div className="mt-4 border-t border-gray-100 pt-4">
             <p className="line-clamp-2 text-sm text-gray-600">
               {developer.description}
             </p>
           </div>
         )}
-        <div className="mt-4 text-center">
-          <span className="inline-block rounded-full bg-yellow-50 px-4 py-1 text-sm font-medium text-yellow-800 transition-colors group-hover:bg-yellow-100">
+        <div className="mt-5">
+          <button className="focus:ring-base w-full rounded-md bg-gray-900 py-2 text-sm font-medium text-white transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-1">
             عرض التفاصيل
-          </span>
+          </button>
         </div>
       </div>
     </div>

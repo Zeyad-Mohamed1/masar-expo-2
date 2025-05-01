@@ -46,9 +46,12 @@ const HomePage = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="mb-8 text-center text-3xl font-bold">
-        المطورين العقاريين
+      <h1 className="mb-6 text-center text-4xl font-bold text-blue-900">
+        مسار إكسبو
       </h1>
+      <p className="mx-auto mb-12 max-w-3xl text-center text-xl text-gray-700">
+        منصة لعرض مشاريع المطورين العقاريين
+      </p>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {developers.map((developer) => (
           <DeveloperCard
