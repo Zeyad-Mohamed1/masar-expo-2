@@ -9,6 +9,7 @@ import { useUser } from "@/hooks/useUser";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import Editor from "@/components/mdx-editor";
 
 interface DeveloperFormProps {
   developer?: Developer | null;
@@ -273,19 +274,51 @@ export default function DeveloperForm({
 
           <div className="col-span-2">
             <label
-              htmlFor="description"
+              htmlFor="shortDescription"
               className="mb-2 block text-sm font-medium"
             >
-              الوصف
+              وصف مختصر
             </label>
             <textarea
-              id="description"
-              name="description"
-              rows={4}
-              defaultValue={developer?.description || ""}
+              id="shortDescription"
+              name="shortDescription"
+              rows={2}
+              defaultValue={developer?.shortDescription || ""}
               placeholder="اكتب وصفًا مختصرًا عن المطور..."
               className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
+          </div>
+
+          <div className="col-span-2">
+            <label
+              htmlFor="longDescription"
+              className="mb-2 block text-sm font-medium"
+            >
+              وصف مفصل
+            </label>
+            <div className="rounded-md border border-gray-300">
+              <Editor
+                value={developer?.longDescription || ""}
+                onChange={(value) => {
+                  // Create a hidden input to store the value for form submission
+                  const input = document.createElement("input");
+                  input.type = "hidden";
+                  input.name = "longDescription";
+                  input.value = value;
+
+                  // Remove any existing hidden input
+                  const existingInput = document.querySelector(
+                    "input[name='longDescription']",
+                  );
+                  if (existingInput) {
+                    existingInput.remove();
+                  }
+
+                  // Add the new input to the form
+                  formRef.current?.appendChild(input);
+                }}
+              />
+            </div>
           </div>
 
           {meetingId && (

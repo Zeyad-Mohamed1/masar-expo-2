@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 
 type DeveloperWithProjects = Developer & {
   projects: Project[];
+  longDescription?: string;
 };
 
 interface DeveloperDetailProps {
@@ -36,8 +37,28 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Custom styles for HTML content */}
+      <style jsx global>{`
+        .developer-long-description h1 {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 1rem;
+          color: #1f2937;
+        }
+        .developer-long-description ul {
+          list-style-type: disc;
+          padding-right: 2rem;
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+        }
+        .developer-long-description li {
+          margin-top: 0.5rem;
+          color: #4b5563;
+        }
+      `}</style>
+
       {/* Developer Header */}
-      <div className="border-base mb-8 overflow-hidden rounded-xl border-l-4 bg-gradient-to-l from-gray-100 to-gray-200 p-6 shadow-md">
+      <div className="mb-8 overflow-hidden rounded-xl border-l-4 border-base bg-gradient-to-l from-gray-100 to-gray-200 p-6 shadow-md">
         <div className="flex flex-col items-center md:flex-row md:items-start md:gap-8">
           <div className="mb-4 h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-md md:mb-0 md:h-32 md:w-32">
             {developer.logo ? (
@@ -59,16 +80,14 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
               {developer.name}
             </h1>
             <p className="mb-4 text-gray-600">
-              {developer.description && developer.description.length > 120
-                ? `${developer.description.substring(0, 120)}...`
-                : developer.description || "مطور عقاري"}
+              {developer.shortDescription || "لا يوجد وصف موجز"}
             </p>
             <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-              <div className="bg-base flex items-center rounded-full bg-opacity-10 px-4 py-1.5 text-sm text-gray-700">
+              <div className="flex items-center rounded-full bg-base bg-opacity-10 px-4 py-1.5 text-sm text-gray-700">
                 <Users className="ml-2 h-4 w-4 text-base" />
                 <span>{developer.projects.length} مشروع</span>
               </div>
-              <div className="bg-base flex items-center rounded-full bg-opacity-10 px-4 py-1.5 text-sm text-gray-700">
+              <div className="flex items-center rounded-full bg-base bg-opacity-10 px-4 py-1.5 text-sm text-gray-700">
                 <HomeIcon className="ml-2 h-4 w-4 text-base" />
                 <span>
                   {developer.projects.reduce(
@@ -87,7 +106,7 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
         {/* Developer Info */}
         <div className="md:col-span-1">
           <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
-            <div className="bg-base border-b border-gray-100 bg-opacity-5 p-4">
+            <div className="border-b border-gray-100 bg-base bg-opacity-5 p-4">
               <h2 className="text-lg font-bold text-gray-900">
                 معلومات الاتصال
               </h2>
@@ -124,24 +143,27 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                   </p>
                 </div>
               )}
-
-              {developer.description && (
-                <div className="border-base bg-base mt-6 rounded-lg border border-opacity-20 bg-opacity-5 p-4">
-                  <h2 className="mb-2 text-lg font-semibold text-gray-900">
-                    نبذة عن المطور
-                  </h2>
-                  <p className="text-gray-700">{developer.description}</p>
-                </div>
-              )}
             </div>
           </div>
         </div>
 
         {/* Projects */}
         <div className="md:col-span-2">
+          {developer.longDescription && (
+            <div className="mb-8 overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+              <h2 className="mb-4 text-xl font-bold text-gray-900">
+                نبذة عن المطور
+              </h2>
+              <div
+                className="developer-long-description text-right"
+                dangerouslySetInnerHTML={{ __html: developer.longDescription }}
+              />
+            </div>
+          )}
+
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">المشاريع</h2>
-            <span className="bg-base rounded-full bg-opacity-10 px-3 py-1 text-sm font-medium text-gray-800">
+            <span className="rounded-full bg-base bg-opacity-10 px-3 py-1 text-sm font-medium text-gray-800">
               {developer.projects.length} مشروع
             </span>
           </div>
@@ -155,7 +177,7 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
               {developer.projects.map((project) => (
                 <div
                   key={project.id}
-                  className="hover:border-base group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:shadow-lg"
+                  className="group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:border-base hover:shadow-lg"
                 >
                   <div className="relative h-48 w-full overflow-hidden">
                     {project.images && project.images.length > 0 ? (
@@ -171,7 +193,7 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                         <HomeIcon className="h-16 w-16 text-gray-300" />
                       </div>
                     )}
-                    <div className="bg-base absolute left-0 top-0 m-3 rounded-full bg-opacity-10 px-3 py-1 text-sm font-semibold text-gray-800">
+                    <div className="absolute left-0 top-0 m-3 rounded-full bg-base bg-opacity-10 px-3 py-1 text-sm font-semibold text-gray-800">
                       {project.status === "completed"
                         ? "مكتمل"
                         : project.status === "in_progress"
@@ -186,11 +208,11 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                       {project.name}
                     </h3>
                     <div className="mb-4 flex flex-wrap gap-2">
-                      <div className="bg-base flex items-center rounded-full bg-opacity-10 px-3 py-1 text-sm text-gray-700">
+                      <div className="flex items-center rounded-full bg-base bg-opacity-10 px-3 py-1 text-sm text-gray-700">
                         <HomeIcon className="ml-1 h-4 w-4 text-base" />
                         <span>{project.units} وحدة</span>
                       </div>
-                      <div className="bg-base flex items-center rounded-full bg-opacity-10 px-3 py-1 text-sm text-gray-700">
+                      <div className="flex items-center rounded-full bg-base bg-opacity-10 px-3 py-1 text-sm text-gray-700">
                         <MapPin className="ml-1 h-4 w-4 text-base" />
                         <span>{project.location}</span>
                       </div>

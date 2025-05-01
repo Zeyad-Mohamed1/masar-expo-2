@@ -133,7 +133,7 @@ function SetupUI({ onSetupComplete }: SetupUIProps) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <h1 className="text-center text-2xl font-bold">Setup</h1>
+      <h1 className="text-center text-2xl font-bold">تحقق من الصوت والصورة</h1>
       <VideoPreview />
       <div className="flex h-16 items-center gap-3">
         <AudioVolumeIndicator />
@@ -145,9 +145,9 @@ function SetupUI({ onSetupComplete }: SetupUIProps) {
           checked={micCamDisabled}
           onChange={(e) => setMicCamDisabled(e.target.checked)}
         />
-        Join with mic and camera off
+        انضم بدون صوت وصورة
       </label>
-      <Button onClick={onSetupComplete}>Join meeting</Button>
+      <Button onClick={onSetupComplete}>انضم إلى الاجتماع</Button>
     </div>
   );
 }
@@ -170,19 +170,19 @@ function UpcomingMeetingScreen() {
   return (
     <div className="flex flex-col items-center gap-6">
       <p>
-        This meeting has not started yet. It will start at{" "}
+        لم يبدأ الاجتماع بعد. سيبدأ في{" "}
         <span className="font-bold">
           {call.state.startsAt?.toLocaleString()}
         </span>
       </p>
       {call.state.custom.description && (
         <p>
-          Description:{" "}
+          الوصف:{" "}
           <span className="font-bold">{call.state.custom.description}</span>
         </p>
       )}
       <Link href="/" className={buttonClassName}>
-        Go home
+        الرجوع إلى الرئيسية
       </Link>
     </div>
   );
@@ -191,12 +191,12 @@ function UpcomingMeetingScreen() {
 function MeetingEndedScreen() {
   return (
     <div className="flex flex-col items-center gap-6">
-      <p className="font-bold">This meeting has ended</p>
+      <p className="font-bold">لقد انتهى الاجتماع</p>
       <Link href="/" className={buttonClassName}>
-        Go home
+        الرجوع إلى الرئيسية
       </Link>
       <div className="space-y-3">
-        <h2 className="text-center text-xl font-bold">Recordings</h2>
+        <h2 className="text-center text-xl font-bold">التسجيلات</h2>
         <RecordingsList />
       </div>
     </div>

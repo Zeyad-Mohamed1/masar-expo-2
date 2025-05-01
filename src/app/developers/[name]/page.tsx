@@ -9,12 +9,12 @@ export async function generateMetadata({
 }: {
   params: { name: string };
 }) {
-  const { name } = params;
+  const { name } = await params;
   const decodedName = decodeURIComponent(name);
 
   return {
-    title: `${decodedName} - Developer Profile`,
-    description: `View details and projects of ${decodedName}`,
+    title: `${decodedName} - مطور عقاري`,
+    description: `عرض التفاصيل والمشاريع الخاصة ب${decodedName}`,
   };
 }
 
@@ -39,7 +39,7 @@ export default async function DeveloperDetailPage({
 }: {
   params: { name: string };
 }) {
-  const { name } = params;
+  const { name } = await params;
   const decodedName = decodeURIComponent(name);
 
   const developer = await getDeveloperByName(decodedName);

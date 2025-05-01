@@ -12,9 +12,10 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
+    const { id } = await params;
     const project = await prisma.project.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       include: {
         developer: true,
@@ -27,7 +28,7 @@ export async function GET(
 
     return NextResponse.json(project);
   } catch (error) {
-    console.error(`Error fetching project with ID ${params.id}:`, error);
+    console.error(`Error fetching project with ID:`, error);
     return NextResponse.json(
       { error: "Error fetching project" },
       { status: 500 },
@@ -39,11 +40,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { id } = await params;
   try {
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
       where: {
-        id: params.id,
+        id,
       },
     });
 
@@ -101,7 +103,7 @@ export async function PUT(
     // Update the project
     const updatedProject = await prisma.project.update({
       where: {
-        id: params.id,
+        id,
       },
       data: {
         name,
@@ -117,7 +119,7 @@ export async function PUT(
 
     return NextResponse.json(updatedProject);
   } catch (error) {
-    console.error(`Error updating project with ID ${params.id}:`, error);
+    console.error(`Error updating project with ID ${id}:`, error);
     return NextResponse.json(
       { error: "Error updating project" },
       { status: 500 },
@@ -129,11 +131,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { id } = await params;
   try {
     // Check if project exists and get its images
     const existingProject = await prisma.project.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       select: {
         id: true,
@@ -163,13 +166,13 @@ export async function DELETE(
     // Delete the project
     await prisma.project.delete({
       where: {
-        id: params.id,
+        id,
       },
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(`Error deleting project with ID ${params.id}:`, error);
+    console.error(`Error deleting project with ID ${id}:`, error);
     return NextResponse.json(
       { error: "Error deleting project" },
       { status: 500 },

@@ -18,17 +18,18 @@ model Admin {
 }
 
 model Developer {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  email       String    @unique
-  phone       String
-  description String?
-  logo        String?
-  projects    Project[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  zoomId      String?
-  count       Int       @default(0)
+  id               String    @id @default(cuid())
+  name             String    @unique
+  email            String    @unique
+  phone            String
+  shortDescription String?
+  longDescription  String?   @db.Text
+  logo             String?
+  projects         Project[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  zoomId           String?
+  count            Int       @default(0)
 
   @@index([zoomId])
 }

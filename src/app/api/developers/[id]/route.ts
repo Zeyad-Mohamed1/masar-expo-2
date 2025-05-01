@@ -9,7 +9,7 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const developer = await prisma.developer.findUnique({
       where: { id },
@@ -38,7 +38,7 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Check if developer exists
     const existingDeveloper = await prisma.developer.findUnique({
@@ -57,7 +57,8 @@ export async function PUT(
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    const description = formData.get("description") as string;
+    const shortDescription = formData.get("shortDescription") as string;
+    const longDescription = formData.get("longDescription") as string;
     const zoomId = formData.get("zoomId") as string;
 
     // Handle logo file if uploaded
@@ -86,7 +87,8 @@ export async function PUT(
         name,
         email,
         phone,
-        description,
+        shortDescription,
+        longDescription,
         zoomId,
         ...(logo ? { logo } : {}), // Only update logo if provided or if there was one
       },
@@ -108,7 +110,7 @@ export async function DELETE(
   { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Check if developer exists
     const existingDeveloper = await prisma.developer.findUnique({

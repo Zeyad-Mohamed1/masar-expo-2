@@ -28,7 +28,8 @@ export async function POST(request: Request) {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    const description = formData.get("description") as string;
+    const shortDescription = formData.get("shortDescription") as string;
+    const longDescription = formData.get("longDescription") as string;
     const zoomId = formData.get("zoomId") as string;
 
     // Check if developer ID is provided (for updates)
@@ -61,7 +62,8 @@ export async function POST(request: Request) {
           name,
           email,
           phone,
-          description,
+          shortDescription,
+          longDescription,
           zoomId,
           ...(logo ? { logo } : {}), // Only update logo if provided
         },
@@ -75,7 +77,8 @@ export async function POST(request: Request) {
           name,
           email,
           phone,
-          description,
+          shortDescription,
+          longDescription,
           zoomId,
           ...(logo ? { logo } : {}),
         },
