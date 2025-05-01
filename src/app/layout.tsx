@@ -1,13 +1,10 @@
 import Navbar from "@/components/Navbar";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import ClientProvider from "./ClientProvider";
 import "./globals.css";
 import AuthProvider from "./providers/AuthProvider";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Masar-Expo",
@@ -21,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={inter.className}>
+      <body>
         <AuthProvider>
           <ClientProvider>
             <Navbar />
