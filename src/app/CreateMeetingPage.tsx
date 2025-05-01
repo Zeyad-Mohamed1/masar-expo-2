@@ -1,13 +1,8 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useUser } from "@/hooks/useUser";
-import {
-  Call,
-  MemberRequest,
-  useStreamVideoClient,
-} from "@stream-io/video-react-sdk";
-import { Copy, Loader2 } from "lucide-react";
+import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { Copy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -20,10 +15,10 @@ export default function CreateMeetingPage() {
 
   const client = useStreamVideoClient();
 
-  const { user } = useUser();
+  console.log("client", client);
 
   async function createMeeting() {
-    if (!client || !user) {
+    if (!client) {
       return;
     }
 
@@ -49,7 +44,7 @@ export default function CreateMeetingPage() {
 
   return (
     <div className="flex flex-col items-center space-y-6">
-      <h1 className="text-center text-2xl font-bold">Welcome {user?.id}!</h1>
+      <h1 className="text-center text-2xl font-bold">Welcome!</h1>
       <div className="mx-auto w-80 space-y-6 rounded-md bg-slate-100 p-5">
         <h2 className="text-xl font-bold">Create a new meeting</h2>
         <DescriptionInput

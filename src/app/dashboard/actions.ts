@@ -1,0 +1,79 @@
+"use server";
+
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export async function getDevelopers() {
+  try {
+    const developers = await prisma.developer.findMany({
+      orderBy: {
+        name: "asc",
+      },
+      include: {
+        _count: {
+          select: {
+            projects: true,
+          },
+        },
+      },
+    });
+
+    return developers;
+  } catch (error) {
+    console.error("Error fetching developers:", error);
+    return [];
+  }
+}
+
+export async function getDeveloperById(id: string) {
+  try {
+    const developer = await prisma.developer.findUnique({
+      where: { id },
+      include: {
+        projects: true,
+      },
+    });
+
+    return developer;
+  } catch (error) {
+    console.error(`Error fetching developer with ID ${id}:`, error);
+    return null;
+  }
+}
+
+export async function getProjects() {
+  try {
+    const projects = await prisma.project.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        developer: true,
+      },
+    });
+
+    console.log(projects);
+
+    return projects;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return [];
+  }
+}
+
+export async function getProjectById(id: string) {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id },
+      include: {
+        developer: true,
+      },
+    });
+
+    return project;
+  } catch (error) {
+    console.error(`Error fetching project with ID ${id}:`, error);
+    return null;
+  }
+}

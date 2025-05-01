@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/lib/store/userStore";
@@ -15,6 +15,14 @@ export default function SignInForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [redirectMessage, setRedirectMessage] = useState("");
+
+  // Check if redirected from dashboard
+  useEffect(() => {
+    if (callbackUrl.startsWith("/dashboard")) {
+      setRedirectMessage("يجب تسجيل الدخول للوصول إلى لوحة التحكم");
+    }
+  }, [callbackUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +66,12 @@ export default function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+      {redirectMessage && (
+        <div className="rounded-md bg-yellow-50 p-4 text-sm text-yellow-700">
+          {redirectMessage}
+        </div>
+      )}
+
       {error && (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
           {error}

@@ -6,8 +6,14 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define public paths that don't require authentication
-  const publicPaths = ["/sign-in", "/meeting/"];
+  const publicPaths = ["/sign-in", "/meeting/", "/", "/developers"];
   const isPublicPath = publicPaths.some(
+    (pp) => path === pp || path.startsWith(pp),
+  );
+
+  // Define protected paths that require authentication
+  const protectedPaths = ["/dashboard"];
+  const isProtectedPath = protectedPaths.some(
     (pp) => path === pp || path.startsWith(pp),
   );
 
@@ -18,6 +24,12 @@ export async function middleware(request: NextRequest) {
   });
 
   // Redirect logic
+  // Specifically protect dashboard routes
+  if (isProtectedPath && !token) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+
+  // Other protected routes logic
   if (!token && !isPublicPath) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
