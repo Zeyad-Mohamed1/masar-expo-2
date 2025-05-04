@@ -17,7 +17,7 @@ type Visitor = {
 };
 
 // Fetch visitors from API
-async function getVisitors(): Promise<Visitor[]> {
+export async function getVisitors(): Promise<Visitor[]> {
   try {
     // Using Next.js server-side fetching
     const response = await prisma.visitor.findMany();
@@ -62,8 +62,6 @@ async function getVisitors(): Promise<Visitor[]> {
 }
 
 export default async function VisitorsPage() {
-  const visitors = await getVisitors();
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -75,7 +73,7 @@ export default async function VisitorsPage() {
       />
 
       {/* Visitors Table */}
-      <VisitorsTable visitors={visitors} />
+      <VisitorsTable />
     </div>
   );
 }

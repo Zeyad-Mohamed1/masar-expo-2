@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
+import { getVisitors } from "../page";
 
 type Visitor = {
   id: string;
@@ -9,12 +10,17 @@ type Visitor = {
   phone: string;
 };
 
-interface VisitorsTableProps {
-  visitors: Visitor[];
-}
-
-export default function VisitorsTable({ visitors }: VisitorsTableProps) {
+export default function VisitorsTable() {
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchVisitors = async () => {
+      const visitors = await getVisitors();
+      setVisitors(visitors);
+    };
+    fetchVisitors();
+  }, []);
 
   const filteredVisitors = visitors.filter(
     (visitor) =>
