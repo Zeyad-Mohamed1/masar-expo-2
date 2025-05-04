@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Eye, Pencil, Plus, Trash, X, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReadOnlyUserCountBadge from "@/components/ReadOnlyUserCountBadge";
+import { getDevelopers } from "../actions";
 
 interface DeveloperWithProjects extends Developer {
   _count?: {
@@ -17,10 +18,8 @@ interface DevelopersListProps {
   developers: DeveloperWithProjects[];
 }
 
-export default function DevelopersList({
-  developers: initialDevelopers,
-}: DevelopersListProps) {
-  const [developers, setDevelopers] = useState(initialDevelopers);
+export default function DevelopersList() {
+  const [developers, setDevelopers] = useState<DeveloperWithProjects[]>([]);
   const [developerToDelete, setDeveloperToDelete] = useState<Developer | null>(
     null,
   );
@@ -43,8 +42,12 @@ export default function DevelopersList({
   };
 
   useEffect(() => {
-    setDevelopers(initialDevelopers);
-  }, [initialDevelopers]);
+    const fetchDevelopers = async () => {
+      const developers = await getDevelopers();
+      setDevelopers(developers);
+    };
+    fetchDevelopers();
+  }, []);
 
   return (
     <div>

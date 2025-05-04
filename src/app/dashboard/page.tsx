@@ -9,31 +9,9 @@ import {
 } from "lucide-react";
 import { PrismaClient } from "@prisma/client";
 import PageHeader from "./components/PageHeader";
-
-// Fix import issue with actions by using Prisma directly
-async function getDeveloperStats() {
-  const prisma = new PrismaClient();
-  try {
-    const developerCount = await prisma.developer.count();
-    const projectCount = await prisma.project.count();
-    const developers = await prisma.developer.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: {
-          select: { projects: true },
-        },
-      },
-    });
-
-    return { developerCount, projectCount, developers };
-  } catch (error) {
-    console.error("Error fetching stats:", error);
-    return { developerCount: 0, projectCount: 0, developers: [] };
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+import { revalidatePath } from "next/cache";
+import { prisma } from "@/lib/prisma";
+import { getDevelopers } from "./actions";
 
 export const metadata: Metadata = {
   title: "لوحة التحكم | نظرة عامة",
@@ -41,9 +19,13 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const { developerCount, projectCount, developers } =
-    await getDeveloperStats();
+  // const { developerCount, projectCount, developers } =
+  //   await getDeveloperStats();
 
+  const developerCount = await prisma.developer.count();
+  const projectCount = await prisma.project.count();
+
+  const developers = await getDevelopers();
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -137,7 +119,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
           <div className="p-6">
-            {developers.length === 0 ? (
+            {developers?.length === 0 ? (
               <div className="rounded-lg bg-gray-50 py-8 text-center">
                 <p className="text-gray-500">لا يوجد مطورين عقاريين بعد</p>
                 <Link
@@ -150,7 +132,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {developers.slice(0, 3).map((developer) => (
+                {developers?.slice(0, 3).map((developer) => (
                   <div
                     key={developer.id}
                     className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3 transition-colors hover:bg-gray-100"

@@ -9,8 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function DevelopersPage() {
-  const developers = await getDevelopers();
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -23,7 +21,7 @@ export default async function DevelopersPage() {
 
       <div className="overflow-hidden rounded-lg bg-white shadow">
         <div className="px-4 py-5 sm:p-6">
-          <DevelopersList developers={developers} />
+          <DevelopersList />
         </div>
       </div>
     </div>
