@@ -20,10 +20,13 @@ interface DeveloperDetailsPageProps {
 export default async function DeveloperDetailsPage({
   params,
 }: DeveloperDetailsPageProps) {
-  const developer = await getDeveloperById(params.id);
+  const { id } = await params;
+  const developer = await getDeveloperById(id);
+
+  console.log(developer);
 
   if (!developer) {
-    notFound();
+    return <div>Developer not found</div>;
   }
 
   return (
@@ -89,10 +92,10 @@ export default async function DeveloperDetailsPage({
               </div>
             </div>
 
-            {developer.description && (
+            {developer.longDescription && (
               <div className="mt-4">
                 <h3 className="mb-2 text-lg font-medium">الوصف</h3>
-                <p className="text-gray-700">{developer.description}</p>
+                <p className="text-gray-700">{developer.longDescription}</p>
               </div>
             )}
           </div>

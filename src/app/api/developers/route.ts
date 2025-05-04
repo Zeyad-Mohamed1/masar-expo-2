@@ -5,7 +5,18 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const developers = await prisma.developer.findMany();
+    const developers = await prisma.developer.findMany({
+      orderBy: {
+        name: "asc",
+      },
+      include: {
+        _count: {
+          select: {
+            projects: true,
+          },
+        },
+      },
+    });
 
     return NextResponse.json(developers);
   } catch (error) {

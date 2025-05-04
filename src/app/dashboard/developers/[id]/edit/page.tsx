@@ -13,10 +13,11 @@ export default async function EditDeveloperPage({
 }: {
   params: { id: string };
 }) {
-  const developer = await getDeveloperById(params.id);
+  const { id } = await params;
+  const developer = await getDeveloperById(id);
 
   if (!developer) {
-    notFound();
+    return <div>Developer not found</div>;
   }
 
   return (

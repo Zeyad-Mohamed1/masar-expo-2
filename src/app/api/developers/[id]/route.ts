@@ -13,7 +13,12 @@ export async function GET(
 
     const developer = await prisma.developer.findUnique({
       where: { id },
+      include: {
+        projects: true,
+      },
     });
+
+    console.log("developer", developer);
 
     if (!developer) {
       return NextResponse.json(

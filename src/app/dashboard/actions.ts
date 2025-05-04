@@ -1,21 +1,19 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function getDevelopers() {
   try {
     const developers = await prisma.developer.findMany({
-      orderBy: {
-        name: "asc",
-      },
       include: {
         _count: {
           select: {
             projects: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
