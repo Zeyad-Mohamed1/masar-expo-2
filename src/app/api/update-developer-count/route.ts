@@ -31,7 +31,6 @@ export async function POST(request: Request) {
     });
 
     // For now, we'll just log the update
-    console.log(`Updated developer count for meeting ${zoomId} to ${count}`);
 
     return NextResponse.json({
       success: true,

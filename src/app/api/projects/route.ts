@@ -59,17 +59,6 @@ export async function POST(request: NextRequest) {
     // Combine existing images with new uploads
     const allImages = [...existingImages, ...uploadedImagePaths];
 
-    // Log for debugging
-    console.log("Creating project with data:", {
-      name,
-      developerId,
-      location,
-      status,
-      units,
-      description,
-      images: allImages,
-    });
-
     // Create the project
     const project = await prisma.project.create({
       data: {

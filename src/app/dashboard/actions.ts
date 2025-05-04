@@ -51,8 +51,6 @@ export async function getProjects() {
       },
     });
 
-    console.log(projects);
-
     return projects;
   } catch (error) {
     console.error("Error fetching projects:", error);

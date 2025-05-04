@@ -18,8 +18,6 @@ export async function GET(
       },
     });
 
-    console.log("developer", developer);
-
     if (!developer) {
       return NextResponse.json(
         { error: "Developer not found" },

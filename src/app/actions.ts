@@ -24,7 +24,5 @@ export async function getToken() {
 
   const token = streamClient.createToken(user.id, expirationTime, issuedAt);
 
-  console.log("Successfully generated token: ", token);
-
   return token;
 }

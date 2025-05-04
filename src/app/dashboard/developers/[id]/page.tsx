@@ -22,8 +22,6 @@ export default async function DeveloperDetailsPage({
   const { id } = await params;
   const developer = await getDeveloperById(id);
 
-  console.log(developer);
-
   if (!developer) {
     return <div>Developer not found</div>;
   }

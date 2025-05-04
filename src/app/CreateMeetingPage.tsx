@@ -15,8 +15,6 @@ export default function CreateMeetingPage() {
 
   const client = useStreamVideoClient();
 
-  console.log("client", client);
-
   async function createMeeting() {
     if (!client) {
       return;
