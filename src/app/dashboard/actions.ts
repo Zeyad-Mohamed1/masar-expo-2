@@ -75,3 +75,22 @@ export async function getProjectById(id: string) {
     return null;
   }
 }
+
+export async function getVisitors() {
+  try {
+    const visitors = await prisma.visitor.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (visitors.length === 0) {
+      return [];
+    }
+
+    return visitors;
+  } catch (error) {
+    console.error("Error fetching visitors:", error);
+    return [];
+  }
+}

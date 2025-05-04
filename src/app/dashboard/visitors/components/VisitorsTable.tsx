@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
-import { getVisitors } from "../page";
+import { getVisitors } from "../../actions";
 
 type Visitor = {
   id: string;
