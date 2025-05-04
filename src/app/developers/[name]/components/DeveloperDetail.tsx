@@ -123,18 +123,6 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
 
               <div className="mb-5 flex items-center">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100">
-                  <Mail className="h-5 w-5 text-yellow-600" />
-                </div>
-                <div className="mr-4">
-                  <div className="text-xs text-gray-500">البريد الإلكتروني</div>
-                  <div className="font-medium text-gray-800">
-                    {developer.email}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-5 flex items-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100">
                   <Phone className="h-5 w-5 text-yellow-600" />
                 </div>
                 <div className="mr-4">

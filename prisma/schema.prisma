@@ -20,7 +20,6 @@ model Admin {
 model Developer {
   id               String    @id @default(cuid())
   name             String    @unique
-  email            String    @unique
   phone            String
   shortDescription String?
   longDescription  String?   @db.Text

@@ -139,9 +139,6 @@ const MainDashboard = async () => {
                           >
                             {developer.name}
                           </Link>
-                          <p className="text-sm text-gray-500">
-                            {developer.email}
-                          </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="rounded-full bg-gray-200 px-2 py-1 text-xs font-medium text-gray-800">

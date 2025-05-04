@@ -82,12 +82,7 @@ export default function DevelopersList() {
                   >
                     الاسم
                   </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900"
-                  >
-                    البريد الإلكتروني
-                  </th>
+
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900"
@@ -135,9 +130,7 @@ export default function DevelopersList() {
                     <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
                       {developer.name}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                      {developer.email}
-                    </td>
+
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                       {developer.phone}
                     </td>

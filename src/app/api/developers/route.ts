@@ -33,7 +33,6 @@ export async function POST(request: Request) {
     const formData = await request.formData();
 
     const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
     const shortDescription = formData.get("shortDescription") as string;
     const longDescription = formData.get("longDescription") as string;
@@ -41,7 +40,7 @@ export async function POST(request: Request) {
 
     const existingDeveloper = await prisma.developer.findFirst({
       where: {
-        OR: [{ name }, { email }],
+        name,
       },
     });
 
@@ -67,9 +66,9 @@ export async function POST(request: Request) {
     }
 
     // Validate required fields
-    if (!name || !email || !phone) {
+    if (!name || !phone) {
       return NextResponse.json(
-        { error: "Name, email, and phone are required fields" },
+        { error: "Name and phone are required fields" },
         { status: 400 },
       );
     }
@@ -80,7 +79,6 @@ export async function POST(request: Request) {
         where: { id: developerId },
         data: {
           name,
-          email,
           phone,
           shortDescription,
           longDescription,
@@ -95,7 +93,6 @@ export async function POST(request: Request) {
       const newDeveloper = await prisma.developer.create({
         data: {
           name,
-          email,
           phone,
           shortDescription,
           longDescription,

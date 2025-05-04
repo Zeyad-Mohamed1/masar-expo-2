@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Save, Upload, X } from "lucide-react";
-import { useUser } from "@/hooks/useUser";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -237,21 +236,6 @@ export default function DeveloperForm({
               type="text"
               defaultValue={developer?.name}
               placeholder="أدخل اسم المطور"
-              required
-              className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium">
-              البريد الإلكتروني
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              defaultValue={developer?.email}
-              placeholder="example@domain.com"
               required
               className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />

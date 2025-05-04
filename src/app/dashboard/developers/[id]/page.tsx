@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
-import { Building2, Clock, Mail, Pencil, Phone } from "lucide-react";
+import { Building2, Clock, Pencil, Phone } from "lucide-react";
 import { getDeveloperById } from "../../actions";
 import ProjectsList from "./components/ProjectsList";
 
@@ -67,11 +66,6 @@ export default async function DeveloperDetailsPage({
             <h2 className="mb-4 text-2xl font-bold">{developer.name}</h2>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-gray-500" />
-                <span className="text-gray-700">{developer.email}</span>
-              </div>
-
               <div className="flex items-center gap-2">
                 <Phone className="h-5 w-5 text-gray-500" />
                 <span className="text-gray-700">{developer.phone}</span>
