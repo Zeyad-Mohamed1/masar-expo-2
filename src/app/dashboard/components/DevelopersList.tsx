@@ -4,7 +4,7 @@ import { Developer } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, Pencil, Plus, Trash, X, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReadOnlyUserCountBadge from "@/components/ReadOnlyUserCountBadge";
 
 interface DeveloperWithProjects extends Developer {
@@ -41,6 +41,10 @@ export default function DevelopersList({
       console.error("Error deleting developer:", error);
     }
   };
+
+  useEffect(() => {
+    setDevelopers(initialDevelopers);
+  }, [initialDevelopers]);
 
   return (
     <div>

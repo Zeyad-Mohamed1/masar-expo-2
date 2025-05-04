@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Eye, Pencil, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface ProjectWithDeveloper extends Project {
   developer: {
@@ -19,6 +21,8 @@ interface ProjectsTableProps {
 
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
   if (projects.length === 0) {
     return (
@@ -56,10 +60,27 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
     setDeleteId(id);
   };
 
-  const confirmDelete = (id: string) => {
-    // TODO: Implement actual delete functionality
-    console.log("Deleting project:", id);
-    setDeleteId(null);
+  const confirmDelete = async (id: string) => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        toast.error("حدث خطأ أثناء حذف المشروع");
+        return;
+      }
+
+      // Refresh the page to show updated projects list
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      // Handle error state if needed
+    } finally {
+      setIsDeleting(false);
+      setDeleteId(null);
+    }
   };
 
   const cancelDelete = () => {
@@ -204,14 +225,16 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
               <button
                 onClick={cancelDelete}
                 className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                disabled={isDeleting}
               >
                 إلغاء
               </button>
               <button
                 onClick={() => confirmDelete(deleteId)}
                 className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                disabled={isDeleting}
               >
-                تأكيد الحذف
+                {isDeleting ? "جاري الحذف..." : "تأكيد الحذف"}
               </button>
             </div>
           </div>
