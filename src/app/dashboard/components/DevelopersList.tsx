@@ -3,8 +3,9 @@
 import { Developer } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, Pencil, Plus, Trash, X } from "lucide-react";
+import { Eye, Pencil, Plus, Trash, X, Users } from "lucide-react";
 import { useState } from "react";
+import ReadOnlyUserCountBadge from "@/components/ReadOnlyUserCountBadge";
 
 interface DeveloperWithProjects extends Developer {
   _count?: {
@@ -89,6 +90,12 @@ export default function DevelopersList({
                   >
                     عدد المشاريع
                   </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900"
+                  >
+                    عدد الحضور
+                  </th>
                   <th scope="col" className="relative py-3.5 pl-4 pr-3">
                     <span className="sr-only">الإجراءات</span>
                   </th>
@@ -126,6 +133,14 @@ export default function DevelopersList({
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                       {developer._count?.projects || 0}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-green-600" />
+                        <ReadOnlyUserCountBadge
+                          developerName={developer.name}
+                        />
+                      </div>
                     </td>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-right text-sm">
                       <div className="flex items-center justify-end gap-3">

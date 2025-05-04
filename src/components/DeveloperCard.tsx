@@ -1,6 +1,7 @@
 import { Developer } from "@prisma/client";
 import { Mail, Phone, Eye, Building } from "lucide-react";
 import Image from "next/image";
+import ReadOnlyUserCountBadge from "./ReadOnlyUserCountBadge";
 
 interface DeveloperCardProps {
   developer: Developer;
@@ -50,7 +51,10 @@ const DeveloperCard = ({
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-700">
             <Eye className="h-4 w-4 text-base" />
-            <span>عدد الحضور : {developer.count}</span>
+            <span>
+              عدد الحضور :{" "}
+              <ReadOnlyUserCountBadge developerName={developer.name} />
+            </span>
           </div>
         </div>
         <div className="mt-4 min-h-10 border-t border-gray-100 pt-4">

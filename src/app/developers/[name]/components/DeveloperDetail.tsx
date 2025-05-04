@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import LiveUserCount from "./LiveUserCount";
 
 type DeveloperWithProjects = Developer & {
   projects: Project[];
@@ -99,6 +100,7 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                         وحدة
                       </span>
                     </div>
+                    <LiveUserCount developerName={developer.name} />
                   </div>
                   <p className="mt-4 text-gray-600">
                     {developer.shortDescription || "لا يوجد وصف موجز"}
