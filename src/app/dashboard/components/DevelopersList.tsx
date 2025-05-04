@@ -3,7 +3,7 @@
 import { Developer } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, Pencil, Plus, Trash, X, Users } from "lucide-react";
+import { Eye, Pencil, Plus, Trash, X, Users, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReadOnlyUserCountBadge from "@/components/ReadOnlyUserCountBadge";
 import { getDevelopers } from "../actions";
@@ -14,15 +14,12 @@ interface DeveloperWithProjects extends Developer {
   };
 }
 
-interface DevelopersListProps {
-  developers: DeveloperWithProjects[];
-}
-
 export default function DevelopersList() {
   const [developers, setDevelopers] = useState<DeveloperWithProjects[]>([]);
   const [developerToDelete, setDeveloperToDelete] = useState<Developer | null>(
     null,
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async (id: string) => {
     try {
@@ -43,15 +40,21 @@ export default function DevelopersList() {
 
   useEffect(() => {
     const fetchDevelopers = async () => {
+      setIsLoading(true);
       const developers = await getDevelopers();
       setDevelopers(developers);
+      setIsLoading(false);
     };
     fetchDevelopers();
   }, []);
 
   return (
     <div>
-      {developers.length === 0 ? (
+      {isLoading ? (
+        <div className="flex h-full items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+        </div>
+      ) : developers.length === 0 ? (
         <div className="rounded-lg bg-gray-50 py-10 text-center shadow-inner">
           <p className="text-gray-500">لا يوجد مطورين عقاريين بعد</p>
           <Link
