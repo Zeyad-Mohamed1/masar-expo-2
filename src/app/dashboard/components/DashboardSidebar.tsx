@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   Users,
+  UsersRound,
   X,
 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
@@ -47,6 +48,7 @@ export default function DashboardSidebar() {
     { name: "الرئيسية", path: "/dashboard", icon: Home },
     { name: "المطورين", path: "/dashboard/developers", icon: Users },
     { name: "المشاريع", path: "/dashboard/projects", icon: Building2 },
+    { name: "الزوار", path: "/dashboard/visitors", icon: UsersRound },
   ];
 
   const handleLogout = async () => {

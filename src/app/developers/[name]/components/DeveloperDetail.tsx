@@ -30,12 +30,12 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
 
   const handleJoinMeeting = () => {
     if (developer.zoomId) {
-      router.push(`/meeting/${developer.zoomId}?guest=true`);
+      router.push(`/meeting/${developer.zoomId}`);
     }
   };
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto max-w-[90%] py-8">
       {/* Custom styles for HTML content */}
       <style jsx global>{`
         .developer-long-description h1 {

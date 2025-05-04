@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 import { getToken } from "./actions";
+import { useRouter } from "next/navigation";
 
 interface ClientProviderProps {
   children: React.ReactNode;
