@@ -6,7 +6,7 @@ const BannerSection = () => {
   return (
     <div className="relative mb-12 overflow-hidden">
       {/* Video Background */}
-      <div className="relative h-[500px] w-full">
+      <div className="relative h-[70vh] w-full">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
