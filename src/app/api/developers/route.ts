@@ -5,11 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const developers = await prisma.developer.findMany({
-      orderBy: {
-        name: "asc",
-      },
-    });
+    const developers = await prisma.developer.findMany();
 
     return NextResponse.json(developers);
   } catch (error) {
@@ -31,6 +27,19 @@ export async function POST(request: Request) {
     const shortDescription = formData.get("shortDescription") as string;
     const longDescription = formData.get("longDescription") as string;
     const zoomId = formData.get("zoomId") as string;
+
+    const existingDeveloper = await prisma.developer.findFirst({
+      where: {
+        OR: [{ name }, { email }],
+      },
+    });
+
+    if (existingDeveloper) {
+      return NextResponse.json(
+        { error: "Developer with this name already exists" },
+        { status: 400 },
+      );
+    }
 
     // Check if developer ID is provided (for updates)
     const developerId = formData.get("id") as string | null;
