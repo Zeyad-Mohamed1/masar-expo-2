@@ -8,6 +8,7 @@ type Visitor = {
   id: string;
   name: string;
   phone: string;
+  createdAt: Date;
 };
 
 export default function VisitorsTable() {
@@ -53,6 +54,9 @@ export default function VisitorsTable() {
               <th className="px-6 py-3" scope="col">
                 رقم الهاتف
               </th>
+              <th className="px-6 py-3" scope="col">
+                وقت التسجيل
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -70,6 +74,9 @@ export default function VisitorsTable() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-gray-500">
                     {visitor.phone}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-gray-500">
+                    {visitor.createdAt.toLocaleString()}
                   </td>
                 </tr>
               ))

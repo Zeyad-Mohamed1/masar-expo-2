@@ -66,15 +66,15 @@ export default function DeveloperForm({
 
     if (!file) return;
 
-    // Validate file size (2MB max)
-    if (file.size > 2 * 1024 * 1024) {
-      setImageError("حجم الصورة يجب أن يكون أقل من 2MB");
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      setImageError("حجم الصورة يجب أن يكون أقل من 10MB");
       return;
     }
 
-    // Validate file type
-    if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-      setImageError("نوع الملف غير مدعوم. استخدم JPEG, PNG, أو GIF");
+    // Validate file is an image
+    if (!file.type.startsWith("image/")) {
+      setImageError("الملف المختار ليس صورة");
       return;
     }
 
@@ -99,22 +99,22 @@ export default function DeveloperForm({
     if (!files || files.length === 0) return;
 
     // Check if total images will exceed limit
-    if (developImages.length + files.length > 10) {
-      setImageError("يمكنك رفع 10 صور كحد أقصى");
+    if (developImages.length + files.length > 30) {
+      setImageError("يمكنك رفع 30 صورة كحد أقصى");
       return;
     }
 
     // Process each file
     Array.from(files).forEach((file) => {
-      // Validate file size (2MB max)
-      if (file.size > 2 * 1024 * 1024) {
-        setImageError("حجم الصورة يجب أن يكون أقل من 2MB");
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        setImageError("حجم الصورة يجب أن يكون أقل من 10MB");
         return;
       }
 
-      // Validate file type
-      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-        setImageError("نوع الملف غير مدعوم. استخدم JPEG, PNG, أو GIF");
+      // Validate file is an image
+      if (!file.type.startsWith("image/")) {
+        setImageError("الملف المختار ليس صورة");
         return;
       }
 
@@ -270,12 +270,12 @@ export default function DeveloperForm({
                   id="logo"
                   name="logo"
                   ref={fileInputRef}
-                  accept="image/jpeg,image/png,image/gif"
+                  accept="image/*"
                   onChange={handleLogoChange}
                   className="hidden"
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  PNG، JPG، GIF بحد أقصى 2MB
+                  جميع أنواع الصور بحد أقصى 10MB
                 </p>
                 {imageError && (
                   <p className="mt-1 text-xs text-red-500">{imageError}</p>
@@ -326,7 +326,7 @@ export default function DeveloperForm({
                   type="file"
                   id="images"
                   name="images"
-                  accept="image/jpeg,image/png,image/gif"
+                  accept="image/*"
                   onChange={handleImagesChange}
                   multiple
                   className="hidden"
@@ -357,7 +357,7 @@ export default function DeveloperForm({
               </div>
 
               <p className="text-xs text-gray-500">
-                يمكنك رفع حتى 10 صور بحجم أقصى 2MB للصورة الواحدة
+                يمكنك رفع حتى 30 صورة بحجم أقصى 10MB للصورة الواحدة
               </p>
               {imageError && (
                 <p className="text-xs text-red-500">{imageError}</p>
