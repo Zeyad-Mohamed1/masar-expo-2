@@ -1,11 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useLink } from "@/hooks/useLink";
 import { Loader2, ExternalLink } from "lucide-react";
+import VisitorDialog from "./VisitorDialog";
 
 const BannerSection = () => {
   const { link, isLoading } = useLink();
-  console.log(link);
+  const [showDialog, setShowDialog] = useState(false);
+
+  const handleJoinClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowDialog(true);
+  };
 
   return (
     <div className="relative mb-12 overflow-hidden">
@@ -58,9 +65,8 @@ const BannerSection = () => {
               ) : (
                 link && (
                   <a
-                    href={link || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="#"
+                    onClick={handleJoinClick}
                     className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-md bg-red-600 bg-opacity-90 px-6 py-3 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:bg-opacity-100 hover:shadow-red-500/30"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -75,6 +81,13 @@ const BannerSection = () => {
           </div>
         </div>
       </div>
+
+      {/* Visitor Dialog */}
+      <VisitorDialog
+        isOpen={showDialog}
+        targetUrl={link}
+        onClose={() => setShowDialog(false)}
+      />
     </div>
   );
 };
