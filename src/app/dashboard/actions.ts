@@ -122,3 +122,14 @@ export async function upsertLink(url: string) {
     throw new Error("Failed to update link");
   }
 }
+
+export async function deleteLink() {
+  try {
+    // Delete all existing links
+    await prisma.link.deleteMany({});
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting link:", error);
+    throw new Error("Failed to delete link");
+  }
+}

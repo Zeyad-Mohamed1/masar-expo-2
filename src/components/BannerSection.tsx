@@ -28,7 +28,7 @@ const BannerSection = () => {
           <source src="/video.mp4" type="video/mp4" />
         </video>
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/70"></div>
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
@@ -50,7 +50,7 @@ const BannerSection = () => {
               </h2>
 
               <p className="mt-8 text-center text-2xl font-medium tracking-wide drop-shadow-md">
-                <span className="rounded-lg bg-gradient-to-r from-red-600/80 to-red-500/60 px-4 py-1">
+                <span className="rounded-lg bg-gradient-to-r from-red-600/80 to-red-500/60 px-4 py-1 text-white">
                   ٩ و ١٠ مايو
                 </span>
               </p>
@@ -58,7 +58,7 @@ const BannerSection = () => {
 
             {/* Join Exhibition Button */}
             <div className="mt-8 flex justify-center">
-              {isLoading ? (
+              {isLoading && link ? (
                 <div className="flex h-12 w-48 items-center justify-center rounded-md bg-red-600 bg-opacity-90 text-white">
                   <Loader2 className="h-5 w-5 animate-spin" />
                 </div>
