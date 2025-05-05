@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { getProjects } from "../actions";
+// import { getProjects } from "../actions";
 import ProjectsTable from "./components/ProjectsTable";
 import PageHeader from "../components/PageHeader";
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  const projects = await getProjects();
+  // const projects = await getProjects();
 
   return (
     <div className="space-y-6">
@@ -33,7 +33,7 @@ export default async function ProjectsPage() {
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             قائمة المشاريع
           </h2>
-          <ProjectsTable projects={projects} />
+          {/* <ProjectsTable projects={projects} /> */}
         </div>
       </div>
     </div>

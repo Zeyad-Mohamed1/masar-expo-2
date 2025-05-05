@@ -1,11 +1,10 @@
 "use client";
 
 import { Developer } from "@prisma/client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Save, Upload, X } from "lucide-react";
-import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { Save, Upload, X, Plus } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import Editor from "@/components/mdx-editor";
@@ -24,39 +23,42 @@ export default function DeveloperForm({
   const [previewLogo, setPreviewLogo] = useState<string | null>(
     developer?.logo || null,
   );
-  const [call, setCall] = useState<Call>();
-  const [meetingId, setMeetingId] = useState<string>("");
   const [imageError, setImageError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [developImages, setDevelopImages] = useState<string[]>(
+    developer?.images || [],
+  );
+  const [replaceImages, setReplaceImages] = useState(false);
+  const [removedImageUrls, setRemovedImageUrls] = useState<string[]>([]);
 
-  // Update meetingId when call changes
-  useEffect(() => {
-    if (call?.id) {
-      setMeetingId(call.id);
-    }
-  }, [call]);
+  // // Update meetingId when call changes
+  // useEffect(() => {
+  //   if (call?.id) {
+  //     setMeetingId(call.id);
+  //   }
+  // }, [call]);
 
-  const client = useStreamVideoClient();
-  async function createMeeting() {
-    if (!client) {
-      return;
-    }
+  // const client = useStreamVideoClient();
+  // async function createMeeting() {
+  //   if (!client) {
+  //     return;
+  //   }
 
-    try {
-      const id = crypto.randomUUID();
-      const callType = "default";
+  //   try {
+  //     const id = crypto.randomUUID();
+  //     const callType = "default";
 
-      const call = client.call(callType, id);
-      await call.getOrCreate();
-      setCall(call);
+  //     const call = client.call(callType, id);
+  //     await call.getOrCreate();
+  //     setCall(call);
 
-      return call?.id;
-    } catch (error) {
-      console.error(error);
-      toast.error("فشل في إنشاء معرف الاجتماع. حاول مرة أخرى.");
-    }
-  }
+  //     return call?.id;
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("فشل في إنشاء معرف الاجتماع. حاول مرة أخرى.");
+  //   }
+  // }
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -90,6 +92,50 @@ export default function DeveloperForm({
     }
   };
 
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    setImageError("");
+
+    if (!files || files.length === 0) return;
+
+    // Check if total images will exceed limit
+    if (developImages.length + files.length > 10) {
+      setImageError("يمكنك رفع 10 صور كحد أقصى");
+      return;
+    }
+
+    // Process each file
+    Array.from(files).forEach((file) => {
+      // Validate file size (2MB max)
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError("حجم الصورة يجب أن يكون أقل من 2MB");
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
+        setImageError("نوع الملف غير مدعوم. استخدم JPEG, PNG, أو GIF");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setDevelopImages((prev) => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    const imageToRemove = developImages[index];
+    setDevelopImages((prev) => prev.filter((_, i) => i !== index));
+
+    // If it's an existing image (not a newly added base64 image), track it for removal
+    if (imageToRemove && !imageToRemove.startsWith("data:")) {
+      setRemovedImageUrls((prev) => [...prev, imageToRemove]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formRef.current) return;
@@ -97,12 +143,6 @@ export default function DeveloperForm({
     setIsLoading(true);
 
     try {
-      // Create meeting ID if not editing (for new developers only)
-      let callId;
-      if (!developer?.id) {
-        callId = await createMeeting();
-      }
-
       // Create FormData from the form
       const formData = new FormData(formRef.current);
 
@@ -111,14 +151,32 @@ export default function DeveloperForm({
         formData.append("id", developer.id);
       }
 
-      // Add the call id as zoomId to formData if available
-      if (callId) {
-        formData.append("zoomId", callId);
-        toast.success("تم إنشاء معرف الاجتماع بنجاح");
-      } else if (developer?.zoomId) {
-        // Keep existing zoomId if any
-        formData.append("zoomId", developer.zoomId);
-      }
+      // Add the replaceImages flag
+      formData.append("replaceImages", replaceImages.toString());
+
+      // For image handling, we'll take a different approach:
+      // Instead of trying to track removals separately, we'll simply send the current state
+      // of developImages as a serialized array to clearly communicate what images should be kept
+      formData.append("currentImages", JSON.stringify(developImages));
+
+      // Add all NEW images from state that are in base64 format
+      // We only need to add files for newly added images (those starting with data:)
+      const newImagePromises = developImages
+        .filter((image) => image.startsWith("data:"))
+        .map(async (image, index) => {
+          try {
+            const response = await fetch(image);
+            const blob = await response.blob();
+            const file = new File([blob], `image-${index}.jpg`, {
+              type: "image/jpeg",
+            });
+            formData.append("images", file);
+          } catch (err) {
+            console.error("Error processing image:", err);
+          }
+        });
+
+      await Promise.all(newImagePromises);
 
       // If using the onSubmit prop, use it
       if (onSubmit) {
@@ -226,6 +284,87 @@ export default function DeveloperForm({
             </div>
           </div>
 
+          <div className="col-span-2">
+            <label className="mb-2 block text-sm font-medium">صور المطور</label>
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-4">
+                {developImages.map((image, index) => (
+                  <div
+                    key={index}
+                    className="group relative h-24 w-24 overflow-hidden rounded-lg border border-gray-300"
+                  >
+                    <Image
+                      src={image}
+                      alt={`Developer image ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label="Remove image"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+
+                <label
+                  htmlFor="images"
+                  className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition-all hover:border-yellow-500"
+                >
+                  <Plus className="h-8 w-8 text-gray-400" />
+                  <span className="mt-1 text-center text-xs text-gray-400">
+                    إضافة صور
+                  </span>
+                </label>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  id="images"
+                  name="images"
+                  accept="image/jpeg,image/png,image/gif"
+                  onChange={handleImagesChange}
+                  multiple
+                  className="hidden"
+                />
+                <label
+                  htmlFor="images"
+                  className="inline-flex cursor-pointer items-center rounded-md bg-yellow-100 px-4 py-2 text-sm font-medium text-yellow-800 transition-colors hover:bg-yellow-200"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  اختر صور المطور
+                </label>
+
+                {developer?.images && developer.images.length > 0 && (
+                  <div className="flex items-center">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={replaceImages}
+                        onChange={(e) => setReplaceImages(e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-yellow-600"
+                      />
+                      <span className="text-sm text-gray-600">
+                        استبدال الصور الحالية
+                      </span>
+                    </label>
+                  </div>
+                )}
+              </div>
+
+              <p className="text-xs text-gray-500">
+                يمكنك رفع حتى 10 صور بحجم أقصى 2MB للصورة الواحدة
+              </p>
+              {imageError && (
+                <p className="text-xs text-red-500">{imageError}</p>
+              )}
+            </div>
+          </div>
+
           <div>
             <label htmlFor="name" className="mb-2 block text-sm font-medium">
               اسم المطور
@@ -304,31 +443,6 @@ export default function DeveloperForm({
               />
             </div>
           </div>
-
-          {meetingId && (
-            <div className="col-span-2 rounded-md bg-green-50 p-3 text-green-800">
-              <input type="hidden" name="zoomId" value={meetingId} />
-              <div className="flex items-center">
-                <div className="mr-3 flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-green-500"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <p className="text-sm">
-                  تم إنشاء معرف الاجتماع:{" "}
-                  <span className="font-mono font-medium">{meetingId}</span>
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

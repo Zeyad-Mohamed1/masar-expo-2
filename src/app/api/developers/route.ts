@@ -9,13 +9,6 @@ export async function GET() {
       orderBy: {
         name: "asc",
       },
-      include: {
-        _count: {
-          select: {
-            projects: true,
-          },
-        },
-      },
     });
 
     return NextResponse.json(developers);
@@ -36,7 +29,6 @@ export async function POST(request: Request) {
     const phone = formData.get("phone") as string;
     const shortDescription = formData.get("shortDescription") as string;
     const longDescription = formData.get("longDescription") as string;
-    const zoomId = formData.get("zoomId") as string;
 
     const existingDeveloper = await prisma.developer.findFirst({
       where: {
@@ -65,6 +57,22 @@ export async function POST(request: Request) {
       logo = `data:${logoFile.type};base64,${buffer.toString("base64")}`;
     }
 
+    // Handle multiple images
+    const imageFiles = formData.getAll("images") as File[];
+    const images: string[] = [];
+
+    // Process each image file
+    if (imageFiles && imageFiles.length > 0) {
+      for (const imageFile of imageFiles) {
+        if (imageFile.size > 0) {
+          const bytes = await imageFile.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          const imageBase64 = `data:${imageFile.type};base64,${buffer.toString("base64")}`;
+          images.push(imageBase64);
+        }
+      }
+    }
+
     // Validate required fields
     if (!name || !phone) {
       return NextResponse.json(
@@ -82,8 +90,8 @@ export async function POST(request: Request) {
           phone,
           shortDescription,
           longDescription,
-          zoomId,
           ...(logo ? { logo } : {}), // Only update logo if provided
+          images, // Always set images array
         },
       });
 
@@ -96,8 +104,8 @@ export async function POST(request: Request) {
           phone,
           shortDescription,
           longDescription,
-          zoomId,
           ...(logo ? { logo } : {}),
+          images, // Always set images array
         },
       });
 

@@ -22,9 +22,6 @@ async function getDeveloperByName(name: string) {
   try {
     const developer = await prisma.developer.findUnique({
       where: { name },
-      include: {
-        projects: true,
-      },
     });
 
     return developer;

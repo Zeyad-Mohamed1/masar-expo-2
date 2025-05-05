@@ -5,14 +5,14 @@ import { getDevelopers } from "../actions";
 import { prisma } from "@/lib/prisma";
 import { Developer } from "@prisma/client";
 import { unstable_noStore as noStore } from "next/cache";
+import LinkForm from "./LinkForm";
 
 const MainDashboard = async () => {
   // Opt out of caching for all data fetches in this component
   noStore();
 
-  const [developerCount, projectCount, developers] = await Promise.all([
+  const [developerCount, developers] = await Promise.all([
     prisma.developer.count(),
-    prisma.project.count(),
     getDevelopers(),
   ]);
 
@@ -50,28 +50,6 @@ const MainDashboard = async () => {
           </div>
         </div>
 
-        {/* Stats Card 2 */}
-        <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-700">المشاريع</h2>
-            <div className="rounded-full bg-gray-100 p-2">
-              <Building2 className="h-5 w-5 text-yellow-500" />
-            </div>
-          </div>
-          <div className="mt-4">
-            <p className="text-3xl font-bold text-gray-900">{projectCount}</p>
-            <p className="mt-1 text-sm text-gray-500">إجمالي المشاريع</p>
-          </div>
-          <div className="mt-6">
-            <Link
-              href="/dashboard/projects"
-              className="text-sm font-medium text-yellow-500 hover:text-yellow-600"
-            >
-              عرض المشاريع
-            </Link>
-          </div>
-        </div>
-
         <div className="rounded-xl bg-white shadow-sm">
           <div className="border-b border-gray-200 px-6 py-4">
             <h2 className="font-semibold text-gray-800">إجراءات سريعة</h2>
@@ -84,14 +62,12 @@ const MainDashboard = async () => {
               <span className="font-medium">إضافة مطور جديد</span>
               <Users className="h-5 w-5" />
             </Link>
-            <Link
-              href="/dashboard/projects/new"
-              className="flex items-center justify-between rounded-lg border border-transparent bg-gray-50 p-3 text-gray-700 transition-colors hover:bg-gray-100 hover:text-yellow-500"
-            >
-              <span className="font-medium">إضافة مشروع جديد</span>
-              <Building2 className="h-5 w-5" />
-            </Link>
           </div>
+        </div>
+
+        {/* Link Management Card */}
+        <div className="md:col-span-1">
+          <LinkForm />
         </div>
       </div>
 
@@ -122,49 +98,40 @@ const MainDashboard = async () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {developers
-                  ?.slice(0, 3)
-                  .map(
-                    (
-                      developer: Developer & { _count: { projects: number } },
-                    ) => (
-                      <div
-                        key={developer.id}
-                        className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                {developers?.slice(0, 3).map((developer: Developer) => (
+                  <div
+                    key={developer.id}
+                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                  >
+                    <div>
+                      <Link
+                        href={`/dashboard/developers/${developer.id}`}
+                        className="font-medium text-gray-900 hover:text-yellow-500"
                       >
-                        <div>
-                          <Link
-                            href={`/dashboard/developers/${developer.id}`}
-                            className="font-medium text-gray-900 hover:text-yellow-500"
-                          >
-                            {developer.name}
-                          </Link>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-gray-200 px-2 py-1 text-xs font-medium text-gray-800">
-                            {developer._count.projects} مشاريع
-                          </span>
-                          <Link
-                            href={`/dashboard/developers/${developer.id}`}
-                            className="rounded-full bg-gray-200 p-1 text-gray-700 hover:bg-yellow-100 hover:text-yellow-700"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </Link>
-                        </div>
-                      </div>
-                    ),
-                  )}
+                        {developer.name}
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/dashboard/developers/${developer.id}`}
+                        className="rounded-full bg-gray-200 p-1 text-gray-700 hover:bg-yellow-100 hover:text-yellow-700"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

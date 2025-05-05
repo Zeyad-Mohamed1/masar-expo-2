@@ -11,6 +11,7 @@ import {
   Users,
   UsersRound,
   X,
+  Link2,
 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
@@ -47,8 +48,9 @@ export default function DashboardSidebar() {
   const navItems = [
     { name: "الرئيسية", path: "/dashboard", icon: Home },
     { name: "المطورين", path: "/dashboard/developers", icon: Users },
-    { name: "المشاريع", path: "/dashboard/projects", icon: Building2 },
+    // { name: "المشاريع", path: "/dashboard/projects", icon: Building2 },
     { name: "الزوار", path: "/dashboard/visitors", icon: UsersRound },
+    { name: "رابط الدعوة", path: "/dashboard/link", icon: Link2 },
   ];
 
   const handleLogout = async () => {

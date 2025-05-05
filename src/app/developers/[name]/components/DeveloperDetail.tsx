@@ -1,39 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { Developer, Project } from "@prisma/client";
+import { Developer } from "@prisma/client";
 import {
-  Mail,
   Phone,
   Video,
   MapPin,
   HomeIcon,
   Tag,
-  CheckCircle,
-  Calendar,
   Users,
-  ExternalLink,
+  Image as ImageIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LiveUserCount from "./LiveUserCount";
 
-type DeveloperWithProjects = Developer & {
-  projects: Project[];
-};
-
 interface DeveloperDetailProps {
-  developer: DeveloperWithProjects;
+  developer: Developer;
 }
 
 const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
   const router = useRouter();
 
-  const handleJoinMeeting = () => {
-    if (developer.zoomId) {
-      router.push(`/meeting/${developer.zoomId}`);
-    }
-  };
+  // const handleJoinMeeting = () => {
+  //   if (developer.zoomId) {
+  //     router.push(`/meeting/${developer.zoomId}`);
+  //   }
+  // };
 
   return (
     <div className="container mx-auto max-w-[90%] py-8">
@@ -86,20 +78,6 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                     {developer.name}
                   </h1>
                   <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-                    <div className="flex items-center rounded-full bg-yellow-100 px-4 py-1.5 text-sm text-gray-700">
-                      <Users className="ml-2 h-4 w-4 text-yellow-600" />
-                      <span>{developer.projects.length} مشروع</span>
-                    </div>
-                    <div className="flex items-center rounded-full bg-yellow-100 px-4 py-1.5 text-sm text-gray-700">
-                      <HomeIcon className="ml-2 h-4 w-4 text-yellow-600" />
-                      <span>
-                        {developer.projects.reduce(
-                          (sum, project) => sum + project.units,
-                          0,
-                        )}{" "}
-                        وحدة
-                      </span>
-                    </div>
                     <LiveUserCount developerName={developer.name} />
                   </div>
                   <p className="mt-4 text-gray-600">
@@ -132,16 +110,6 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                   </div>
                 </div>
               </div>
-
-              {developer.zoomId && (
-                <button
-                  onClick={handleJoinMeeting}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-l from-black to-gray-800 px-4 py-3 text-white transition-all hover:from-gray-900 hover:to-black hover:shadow-md"
-                >
-                  <Video className="h-5 w-5" />
-                  <span>انضم إلى الاجتماع المباشر</span>
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -172,71 +140,34 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
           </div>
         </div>
 
-        {/* Projects */}
+        {/* Gallery */}
         <div className="md:col-span-2">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">المشاريع</h2>
+            <h2 className="text-2xl font-bold text-gray-900">معرض الصور</h2>
             <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-gray-800">
-              {developer.projects.length} مشروع
+              {developer.images.length} صورة
             </span>
           </div>
 
-          {developer.projects.length === 0 ? (
+          {developer.images.length === 0 ? (
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-md">
-              <p className="text-center text-gray-500">لا توجد مشاريع متاحة</p>
+              <p className="text-center text-gray-500">لا توجد صور متاحة</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {developer.projects.map((project) => (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+              {developer.images.map((imageUrl, index) => (
                 <div
-                  key={project.id}
+                  key={index}
                   className="group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:border-yellow-400 hover:shadow-lg"
                 >
-                  <div className="relative h-48 w-full overflow-hidden">
-                    {project.images && project.images.length > 0 ? (
-                      <Image
-                        src={project.images[0]}
-                        alt={project.name}
-                        width={400}
-                        height={300}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 text-gray-400">
-                        <HomeIcon className="h-16 w-16 text-gray-300" />
-                      </div>
-                    )}
-                    <div className="absolute left-0 top-0 m-3 rounded-full bg-yellow-100 px-3 py-1 text-sm font-semibold text-gray-800">
-                      {project.status === "completed"
-                        ? "مكتمل"
-                        : project.status === "in_progress"
-                          ? "قيد الإنشاء"
-                          : project.status === "planned"
-                            ? "مخطط"
-                            : project.status}
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                      {project.name}
-                    </h3>
-                    <div className="mb-4 flex flex-wrap gap-2">
-                      <div className="flex items-center rounded-full bg-yellow-50 px-3 py-1 text-sm text-gray-700">
-                        <HomeIcon className="ml-1 h-4 w-4 text-yellow-600" />
-                        <span>{project.units} وحدة</span>
-                      </div>
-                      <div className="flex items-center rounded-full bg-yellow-50 px-3 py-1 text-sm text-gray-700">
-                        <MapPin className="ml-1 h-4 w-4 text-yellow-600" />
-                        <span>{project.location}</span>
-                      </div>
-                    </div>
-                    {project.description && (
-                      <div className="mt-3 border-t border-gray-100 pt-3">
-                        <p className="line-clamp-3 text-sm text-gray-700">
-                          {project.description}
-                        </p>
-                      </div>
-                    )}
+                  <div className="relative h-64 w-full overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      alt={`${developer.name} - صورة ${index + 1}`}
+                      width={400}
+                      height={300}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
                   </div>
                 </div>
               ))}

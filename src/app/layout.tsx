@@ -20,11 +20,11 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className="antialiased">
         <AuthProvider>
-          <ClientProvider>
-            <Navbar />
-            {children}
-            <Toaster position="top-center" />
-          </ClientProvider>
+          {/* <ClientProvider> */}
+          <Navbar />
+          {children}
+          <Toaster position="top-center" />
+          {/* </ClientProvider> */}
         </AuthProvider>
       </body>
     </html>

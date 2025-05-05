@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Admin {
@@ -18,37 +18,42 @@ model Admin {
 }
 
 model Developer {
-  id               String    @id @default(cuid())
-  name             String    @unique
+  id               String   @id @default(cuid())
+  name             String   @unique
   phone            String
   shortDescription String?
-  longDescription  String?   @db.Text
+  longDescription  String?  @db.Text
   logo             String?
-  projects         Project[]
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  zoomId           String?
-  count            Int       @default(0)
-
-  @@index([zoomId])
+  images           String[]
+  // projects         Project[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  count            Int      @default(0)
 }
 
-model Project {
-  id          String    @id @default(cuid())
-  name        String
-  developerId String
-  developer   Developer @relation(fields: [developerId], references: [id], onDelete: Cascade)
-  location    String
-  status      String
-  units       Int
-  description String?
-  images      String[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Images      String[]
-
-  @@index([developerId])
+model link {
+  id        String   @id @default(cuid())
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+// model Project {
+//   id          String    @id @default(cuid())
+//   name        String
+//   developerId String
+//   developer   Developer @relation(fields: [developerId], references: [id], onDelete: Cascade)
+//   location    String
+//   status      String
+//   units       Int
+//   description String?
+//   images      String[]
+//   createdAt   DateTime  @default(now())
+//   updatedAt   DateTime  @updatedAt
+//   Images      String[]
+
+//   @@index([developerId])
+// }
 
 model Visitor {
   id        String   @id @default(cuid())

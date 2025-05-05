@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 // GET developer by ID
 export async function GET(
@@ -13,9 +12,6 @@ export async function GET(
 
     const developer = await prisma.developer.findUnique({
       where: { id },
-      include: {
-        projects: true,
-      },
     });
 
     if (!developer) {
@@ -61,7 +57,6 @@ export async function PUT(
     const phone = formData.get("phone") as string;
     const shortDescription = formData.get("shortDescription") as string;
     const longDescription = formData.get("longDescription") as string;
-    const zoomId = formData.get("zoomId") as string;
 
     // Handle logo file if uploaded
     let logoFile = formData.get("logo") as File | null;
@@ -72,6 +67,64 @@ export async function PUT(
       const bytes = await logoFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
       logo = `data:${logoFile.type};base64,${buffer.toString("base64")}`;
+    }
+
+    // Handle multiple images
+    const imageFiles = formData.getAll("images") as File[];
+    let newImages: string[] = [];
+
+    // Get current images from the form data - this is the authoritative list
+    const currentImagesJson = formData.get("currentImages") as string;
+    if (currentImagesJson) {
+      try {
+        // Parse the current images JSON
+        const parsedImages = JSON.parse(currentImagesJson) as string[];
+
+        // Filter out any data URLs since those will be added from the imageFiles
+        newImages = parsedImages.filter((img) => !img.startsWith("data:"));
+      } catch (e) {
+        console.error("Error parsing currentImages JSON:", e);
+        // Fallback to existing images if parsing fails
+        newImages = [...(existingDeveloper.images || [])];
+      }
+    } else {
+      // Check if we need to replace all images (legacy support)
+      const replaceImages = formData.get("replaceImages") === "true";
+      if (replaceImages) {
+        newImages = [];
+      } else {
+        newImages = [...(existingDeveloper.images || [])];
+      }
+
+      // Legacy support for removedImages
+      const removedImagesJson = formData.get("removedImages") as string;
+      if (removedImagesJson) {
+        try {
+          const removedUrls = JSON.parse(removedImagesJson) as string[];
+          if (removedUrls.length > 0) {
+            for (const urlToRemove of removedUrls) {
+              const index = newImages.indexOf(urlToRemove);
+              if (index !== -1) {
+                newImages.splice(index, 1);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Error parsing removedImages JSON:", e);
+        }
+      }
+    }
+
+    // Process each image file
+    if (imageFiles && imageFiles.length > 0) {
+      for (const imageFile of imageFiles) {
+        if (imageFile.size > 0) {
+          const bytes = await imageFile.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          const imageBase64 = `data:${imageFile.type};base64,${buffer.toString("base64")}`;
+          newImages.push(imageBase64);
+        }
+      }
     }
 
     // Validate required fields
@@ -90,8 +143,8 @@ export async function PUT(
         phone,
         shortDescription,
         longDescription,
-        zoomId,
         ...(logo ? { logo } : {}), // Only update logo if provided or if there was one
+        images: newImages, // Always update images array
       },
     });
 

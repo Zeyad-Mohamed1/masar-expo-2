@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import SignInForm from "./components/SignInForm";
 import { Metadata } from "next";
+import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -14,7 +16,15 @@ export default async function SignInPage() {
           <h1 className="text-2xl font-bold">تسجيل الدخول إلى حسابك</h1>
           <p className="mt-2 text-sm text-gray-600">أدخل إذنك أدناه</p>
         </div>
-        <SignInForm />
+        <Suspense
+          fallback={
+            <div className="flex h-full w-full items-center justify-center">
+              <Loader2 className="h-10 w-10 animate-spin" />
+            </div>
+          }
+        >
+          <SignInForm />
+        </Suspense>
       </div>
     </div>
   );
