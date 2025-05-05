@@ -12,6 +12,7 @@ import {
   UsersRound,
   X,
   Link2,
+  Globe,
 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
@@ -51,6 +52,7 @@ export default function DashboardSidebar() {
     // { name: "المشاريع", path: "/dashboard/projects", icon: Building2 },
     { name: "الزوار", path: "/dashboard/visitors", icon: UsersRound },
     { name: "رابط الدعوة", path: "/dashboard/link", icon: Link2 },
+    { name: "بيانات الموقع", path: "/dashboard/website", icon: Globe },
   ];
 
   const handleLogout = async () => {

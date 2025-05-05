@@ -133,3 +133,84 @@ export async function deleteLink() {
     throw new Error("Failed to delete link");
   }
 }
+
+export async function getWebsiteData() {
+  try {
+    // Get the first website data record (we only keep one)
+    const websiteData = await prisma.websiteData.findFirst({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return websiteData;
+  } catch (error) {
+    console.error("Error fetching website data:", error);
+    return null;
+  }
+}
+
+export async function updateWebsiteData(formData: FormData) {
+  try {
+    // Get existing website data
+    const existingData = await prisma.websiteData.findFirst();
+
+    // Handle banner image
+    let banner = existingData?.banner || null;
+    const bannerDataUrl = formData.get("banner") as string | null;
+    const keepExistingBanner = formData.get("keepExistingBanner") === "true";
+
+    if (bannerDataUrl) {
+      // Use the data URL directly
+      banner = bannerDataUrl;
+    } else if (!keepExistingBanner) {
+      // If not keeping existing and no new image, set to null
+      banner = null;
+    }
+
+    // Handle about image
+    let aboutImage = existingData?.aboutImage || null;
+    const aboutImageDataUrl = formData.get("aboutImage") as string | null;
+    const keepExistingAboutImage =
+      formData.get("keepExistingAboutImage") === "true";
+
+    if (aboutImageDataUrl) {
+      // Use the data URL directly
+      aboutImage = aboutImageDataUrl;
+    } else if (!keepExistingAboutImage) {
+      // If not keeping existing and no new image, set to null
+      aboutImage = null;
+    }
+
+    // Get about text
+    const about =
+      (formData.get("about") as string) || existingData?.about || null;
+
+    // If we have existing data, update it
+    if (existingData) {
+      const updatedData = await prisma.websiteData.update({
+        where: { id: existingData.id },
+        data: {
+          banner,
+          about,
+          aboutImage,
+        },
+      });
+      return updatedData;
+    }
+    // Otherwise create a new record
+    else {
+      const newData = await prisma.websiteData.create({
+        data: {
+          banner,
+          about,
+          aboutImage,
+        },
+      });
+      return newData;
+    }
+  } catch (error) {
+    console.error("Error updating website data:", error);
+    throw new Error("Failed to update website data");
+  }
+}

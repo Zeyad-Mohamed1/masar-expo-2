@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLink } from "@/hooks/useLink";
-import { Loader2, ExternalLink } from "lucide-react";
+import { Loader2, ExternalLink, Image as ImageIcon } from "lucide-react";
 import VisitorDialog from "./VisitorDialog";
+import { getWebsiteData } from "@/app/dashboard/actions";
+import Image from "next/image";
 
 const BannerSection = () => {
+  const [loading, setLoading] = useState(false);
+  const [banner, setBanner] = useState<{ banner?: string | null } | null>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { link, isLoading } = useLink();
   const [showDialog, setShowDialog] = useState(false);
 
@@ -14,19 +20,73 @@ const BannerSection = () => {
     setShowDialog(true);
   };
 
+  useEffect(() => {
+    setLoading(true);
+    const fetchLink = async () => {
+      try {
+        const bannerData = await getWebsiteData();
+        setBanner(bannerData as any);
+      } catch (error) {
+        console.error("Failed to fetch banner data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLink();
+  }, []);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(true); // Still mark as "loaded" to remove loading state
+  };
+
   return (
     <div className="relative mb-12 overflow-hidden">
-      {/* Video Background */}
+      {/* Background */}
       <div className="relative h-[70vh] w-full">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-        >
-          <source src="/video.mp4" type="video/mp4" />
-        </video>
+        {banner?.banner ? (
+          <>
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                <Loader2 className="h-10 w-10 animate-spin text-white" />
+              </div>
+            )}
+            <Image
+              src={banner.banner}
+              alt="Banner image"
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+                imageLoaded && !imageError ? "opacity-100" : "opacity-0"
+              }`}
+              fill
+              priority
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          </>
+        ) : (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src="/video.mp4" type="video/mp4" />
+          </video>
+        )}
+
+        {/* Fallback if image fails to load */}
+        {imageError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900">
+            <ImageIcon className="h-16 w-16 text-gray-400" />
+            <p className="mt-4 text-gray-400">فشل تحميل الصورة</p>
+          </div>
+        )}
+
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/70"></div>
 

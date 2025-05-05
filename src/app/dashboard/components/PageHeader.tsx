@@ -9,6 +9,7 @@ import {
   Settings,
   FileText,
   Link2,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,7 +20,8 @@ type IconName =
   | "Building2"
   | "Settings"
   | "FileText"
-  | "Link2";
+  | "Link2"
+  | "Globe";
 
 interface PageHeaderProps {
   title: string;
@@ -48,6 +50,7 @@ export default function PageHeader({
     Settings,
     FileText,
     Link2,
+    Globe,
   };
 
   // Get the icon component
