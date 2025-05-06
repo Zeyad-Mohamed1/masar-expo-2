@@ -60,17 +60,53 @@ export default function DeveloperForm({
   //   }
   // }
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Compress image function with more aggressive compression
+  const compressImage = (file: File, maxWidth = 800, quality = 0.5): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Calculate new dimensions if needed
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error('Canvas to Blob conversion failed'));
+              }
+            },
+            'image/jpeg', // Always convert to JPEG for better compression
+            quality
+          );
+        };
+        img.onerror = () => reject(new Error('Image loading error'));
+      };
+      reader.onerror = () => reject(new Error('FileReader error'));
+    });
+  };
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setImageError("");
 
     if (!file) return;
-
-    // Validate file size (10MB max)
-    if (file.size > 10 * 1024 * 1024) {
-      setImageError("حجم الصورة يجب أن يكون أقل من 10MB");
-      return;
-    }
 
     // Validate file is an image
     if (!file.type.startsWith("image/")) {
@@ -78,11 +114,18 @@ export default function DeveloperForm({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewLogo(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    try {
+      // Always compress images
+      const compressedBlob = await compressImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewLogo(reader.result as string);
+      };
+      reader.readAsDataURL(compressedBlob);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      setImageError("حدث خطأ أثناء معالجة الصورة");
+    }
   };
 
   const clearLogoPreview = () => {
@@ -92,7 +135,7 @@ export default function DeveloperForm({
     }
   };
 
-  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImagesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     setImageError("");
 
@@ -105,25 +148,26 @@ export default function DeveloperForm({
     }
 
     // Process each file
-    Array.from(files).forEach((file) => {
-      // Validate file size (10MB max)
-      if (file.size > 10 * 1024 * 1024) {
-        setImageError("حجم الصورة يجب أن يكون أقل من 10MB");
-        return;
-      }
-
+    for (const file of Array.from(files)) {
       // Validate file is an image
       if (!file.type.startsWith("image/")) {
         setImageError("الملف المختار ليس صورة");
-        return;
+        continue;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setDevelopImages((prev) => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+      try {
+        // Always compress images
+        const compressedBlob = await compressImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setDevelopImages((prev) => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(compressedBlob);
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        setImageError("حدث خطأ أثناء معالجة الصورة");
+      }
+    }
   };
 
   const removeImage = (index: number) => {
@@ -165,11 +209,36 @@ export default function DeveloperForm({
         .filter((image) => image.startsWith("data:"))
         .map(async (image, index) => {
           try {
-            const response = await fetch(image);
-            const blob = await response.blob();
-            const file = new File([blob], `image-${index}.jpg`, {
-              type: "image/jpeg",
+            // Extract the base64 data without the MIME prefix
+            const base64Data = image.split(",")[1];
+            const imageType = image.split(";")[0].split(":")[1];
+            
+            // Convert base64 to blob more efficiently
+            const byteCharacters = atob(base64Data);
+            const byteArrays = [];
+            
+            // Use smaller chunks for better memory management
+            const chunkSize = 512;
+            for (let offset = 0; offset < byteCharacters.length; offset += chunkSize) {
+              const slice = byteCharacters.slice(offset, offset + chunkSize);
+              
+              const byteNumbers = new Array(slice.length);
+              for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+              }
+              
+              const byteArray = new Uint8Array(byteNumbers);
+              byteArrays.push(byteArray);
+            }
+            
+            const blob = new Blob(byteArrays, { type: 'image/jpeg' });
+            
+            // Further compress the image before upload
+            const compressedBlob = await compressImage(new File([blob], `image-${index}.jpg`, { type: 'image/jpeg' }));
+            const file = new File([compressedBlob], `image-${index}.jpg`, {
+              type: 'image/jpeg',
             });
+            
             formData.append("images", file);
           } catch (err) {
             console.error("Error processing image:", err);
@@ -189,6 +258,7 @@ export default function DeveloperForm({
 
         const method = developer?.id ? "PUT" : "POST";
 
+        // Use chunked upload for large payloads
         const response = await axios({
           method,
           url,
@@ -196,6 +266,9 @@ export default function DeveloperForm({
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+          timeout: 60000, // Increase timeout to 60 seconds
         });
 
         if (response.status === 200 || response.status === 201) {

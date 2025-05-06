@@ -1,16 +1,16 @@
 "use client";
 
 import { websiteData } from "@prisma/client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Save, Upload, X } from "lucide-react";
+import { Save, Upload, X, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import Editor from "@/components/mdx-editor";
+import { getWebsiteData } from "../../actions";
 
 interface WebsiteDataFormProps {
-  websiteData?: websiteData | null;
   onSubmit?: (formData: FormData) => Promise<any>;
 }
 
@@ -66,29 +66,45 @@ const resizeImage = (
 };
 
 export default function WebsiteDataForm({
-  websiteData,
   onSubmit,
 }: WebsiteDataFormProps) {
+  const [websiteData, setWebsiteData] = useState<websiteData | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWebsiteData = async () => {
+      try {
+        const data = await getWebsiteData();
+        if (data) {
+          setWebsiteData(data);
+          setPreviewBanner(data.banner || null);
+          setPreviewAboutImage(data.aboutImage || null);
+          setAboutText(data.about || "");
+        }
+      } catch (error) {
+        console.error("Error fetching website data:", error);
+        toast.error("حدث خطأ أثناء تحميل البيانات");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+    fetchWebsiteData();
+  }, []);
+
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const aboutImageInputRef = useRef<HTMLInputElement>(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [previewBanner, setPreviewBanner] = useState<string | null>(
-    websiteData?.banner || null,
-  );
-  const [previewAboutImage, setPreviewAboutImage] = useState<string | null>(
-    websiteData?.aboutImage || null,
-  );
-  const [aboutText, setAboutText] = useState<string>(websiteData?.about || "");
+  const [previewBanner, setPreviewBanner] = useState<string | null>(null);
+  const [previewAboutImage, setPreviewAboutImage] = useState<string | null>(null);
+  const [aboutText, setAboutText] = useState<string>("");
   const [imageError, setImageError] = useState<string | null>(null);
 
   // Used to store resized images
   const [bannerDataUrl, setBannerDataUrl] = useState<string | null>(null);
-  const [aboutImageDataUrl, setAboutImageDataUrl] = useState<string | null>(
-    null,
-  );
+  const [aboutImageDataUrl, setAboutImageDataUrl] = useState<string | null>(null);
 
   // Handle banner image change
   const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -223,6 +239,17 @@ export default function WebsiteDataForm({
     }
   };
 
+  if (dataLoading) {
+    return (
+      <div className="flex h-48 w-full items-center justify-center rounded-lg bg-white p-6 shadow">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
+          <p className="mt-2 text-sm text-gray-500">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
       <div className="rounded-lg bg-white p-6 shadow">
@@ -343,6 +370,12 @@ export default function WebsiteDataForm({
             </div>
           </div>
 
+          {imageError && (
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+              {imageError}
+            </div>
+          )}
+
           {/* About Text */}
           <div>
             <label className="mb-2 block text-sm font-medium">
@@ -366,7 +399,10 @@ export default function WebsiteDataForm({
           className="inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isLoading ? (
-            <>جاري الحفظ...</>
+            <span className="flex items-center">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              جاري الحفظ...
+            </span>
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />

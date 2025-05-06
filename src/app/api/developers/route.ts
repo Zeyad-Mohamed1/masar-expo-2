@@ -3,6 +3,15 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '100mb',
+    },
+    responseLimit: '100mb',
+  },
+};
+
 export async function GET() {
   try {
     const developers = await prisma.developer.findMany({

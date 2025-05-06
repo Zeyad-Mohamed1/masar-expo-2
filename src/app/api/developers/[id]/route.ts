@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '100mb',
+    },
+    responseLimit: '100mb',
+  },
+};
+
 // GET developer by ID
 export async function GET(
   request: Request,

@@ -9,8 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function WebsiteDataPage() {
-  const websiteData = await getWebsiteData();
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -22,7 +20,7 @@ export default async function WebsiteDataPage() {
       />
 
       {/* Website Data Form */}
-      <WebsiteDataForm websiteData={websiteData} onSubmit={updateWebsiteData} />
+      <WebsiteDataForm onSubmit={updateWebsiteData} />
     </div>
   );
 }

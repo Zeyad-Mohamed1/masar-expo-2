@@ -136,7 +136,6 @@ export async function deleteLink() {
 
 export async function getWebsiteData() {
   try {
-    // Get the first website data record (we only keep one)
     const websiteData = await prisma.websiteData.findFirst({
       orderBy: {
         createdAt: "desc",

@@ -69,12 +69,7 @@ export default async function DeveloperDetailsPage({
                 <span className="text-gray-700">{developer.phone}</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-gray-500" />
-                <span className="text-gray-700">
-                  {developer.projects.length} مشروع
-                </span>
-              </div>
+           =
 
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-gray-500" />
@@ -87,17 +82,14 @@ export default async function DeveloperDetailsPage({
             {developer.longDescription && (
               <div className="mt-4">
                 <h3 className="mb-2 text-lg font-medium">الوصف</h3>
-                <p className="text-gray-700">{developer.longDescription}</p>
+                <div dangerouslySetInnerHTML={{ __html: developer.longDescription }} />
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow">
-        <h2 className="mb-6 text-xl font-semibold">مشاريع المطور</h2>
-        <ProjectsList projects={developer.projects} />
-      </div>
+
     </div>
   );
 }
