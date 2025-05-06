@@ -169,10 +169,11 @@ const HomePage = () => {
   // If event hasn't started and we're not showing developers, only show the countdown
   if (!eventStarted) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center p-4">
-        <div className="flex h-[60vh] w-full max-w-xl flex-col justify-center">
+      <div className="container mx-auto max-w-[90%] py-8">
+        <div className="flex h-[60vh] flex-col justify-center">
           {renderCountdown()}
         </div>
+
         <h1 className="mb-6 text-center text-4xl font-bold text-black">
           مسار إكسبو
         </h1>
@@ -192,6 +193,17 @@ const HomePage = () => {
                 handleDeveloperClick={handleDeveloperClick}
               />
             ))}
+          </div>
+        )}
+
+        {hasMore && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={handleShowMore}
+              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              عرض المزيد
+            </button>
           </div>
         )}
       </div>
