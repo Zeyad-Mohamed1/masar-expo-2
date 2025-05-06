@@ -205,14 +205,11 @@ export default function DeveloperForm({
 
       // Deduplicate images
       const uniqueImages = [...new Set(developImages)];
-      console.log(`Total unique images: ${uniqueImages.length}`);
       
       // Split images into existing ones and new ones (data URLs)
       const existingImages = uniqueImages.filter(img => !img.startsWith('data:'));
       const newImages = uniqueImages.filter(img => img.startsWith('data:'));
       
-      console.log(`Existing images: ${existingImages.length}`);
-      console.log(`New images: ${newImages.length}`);
       
       // Send the full images array including both existing and new
       formData.append("currentImages", JSON.stringify(uniqueImages));
@@ -231,8 +228,6 @@ export default function DeveloperForm({
 
         const method = developer?.id ? "PUT" : "POST";
 
-        console.log(`Submitting to ${url} with method ${method}`);
-        console.log(`FormData has ${formData.getAll('currentImages').length} currentImages entries`);
 
         // Use chunked upload for large payloads
         const response = await axios({
@@ -247,7 +242,6 @@ export default function DeveloperForm({
           timeout: 120000, // Increase timeout to 2 minutes for larger uploads
         });
 
-        console.log(`Response received with status: ${response.status}`);
 
         if (response.status === 200 || response.status === 201) {
           toast.success(

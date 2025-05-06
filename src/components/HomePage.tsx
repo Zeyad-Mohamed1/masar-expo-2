@@ -105,7 +105,6 @@ const HomePage = () => {
   const visibleDevelopers = developers.slice(0, visibleCount);
   const hasMore = visibleCount < developers.length;
 
-  console.log(developers);
 
   // Render countdown timer
   const renderCountdown = () => {
