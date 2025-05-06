@@ -108,20 +108,6 @@ const HomePage = () => {
 
   // Render countdown timer
   const renderCountdown = () => {
-    if (eventStarted) {
-      return (
-        <div className="mx-auto mb-8 max-w-3xl rounded-lg bg-green-50 p-6 text-center shadow-md">
-          <h2 className="mb-2 text-2xl font-bold text-green-700">
-            المعرض قد بدأ!
-          </h2>
-          <p className="text-lg text-green-600">
-            المعرض قد بدأ يوم الجمعة الموافق 9 مايو الساعة الثالثة عصرا بتوقيت
-            القاهرة
-          </p>
-        </div>
-      );
-    }
-
     return (
       <div className="mx-auto mb-8 max-w-3xl rounded-lg bg-yellow-50 p-4 shadow-md">
         <div className="mb-3 flex items-center justify-center gap-2 text-lg font-bold text-yellow-700">

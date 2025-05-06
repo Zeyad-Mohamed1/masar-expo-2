@@ -118,7 +118,7 @@ const VideoSection = ({ videoSrc, imageSrc }: VideoSectionProps) => {
                   onLoad={() => setIsLoading(false)}
                 />
               </div>
-            ) : isVideo ? (
+            ) :  (
               <video
                 ref={videoRef}
                 className="h-full w-full object-cover"
@@ -128,10 +128,6 @@ const VideoSection = ({ videoSrc, imageSrc }: VideoSectionProps) => {
                 playsInline
                 controls
               />
-            ) : (
-              <div className="flex h-full items-center justify-center bg-gray-100">
-                <p>No media available</p>
-              </div>
             )}
           </div>
         </div>

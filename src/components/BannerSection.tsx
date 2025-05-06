@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLink } from "@/hooks/useLink";
-import { Loader2, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { Loader2, ExternalLink, Image as ImageIcon, Download } from "lucide-react";
 import VisitorDialog from "./VisitorDialog";
 import { getWebsiteData } from "@/app/dashboard/actions";
 import Image from "next/image";
@@ -137,6 +137,46 @@ const BannerSection = () => {
                   </a>
                 )
               )}
+            </div>
+            
+            {/* Download Zoom App Buttons */}
+            <div className="mt-10">
+              <p className="mb-4 text-center text-lg font-medium text-white drop-shadow-md">
+                تحميل تطبيق زووم للمشاركة في المعرض
+              </p>
+            <div className="mt-6 flex justify-center space-x-4 rtl:space-x-reverse">
+
+              <a
+                href="https://apps.apple.com/eg/app/zoom-workplace/id546505307"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-md bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              >
+                <Image 
+                  src="/assets/images/apple-logo.png" 
+                  alt="Apple App Store"
+                  width={20}
+                  height={20}
+                  className="h-5 w-5"
+                />
+                تحميل زووم للايفون
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-md bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              >
+                <Image 
+                  src="/assets/images/android-logo.png" 
+                  alt="Google Play Store"
+                  width={20}
+                  height={20}
+                  className="h-5 w-5"
+                />
+                تحميل زووم للاندرويد
+              </a>
+            </div>
             </div>
           </div>
         </div>
