@@ -79,18 +79,37 @@ export async function PUT(
     }
 
     // Handle multiple images
-    const imageFiles = formData.getAll("images") as File[];
     let newImages: string[] = [];
 
     // Get current images from the form data - this is the authoritative list
     const currentImagesJson = formData.get("currentImages") as string;
+    console.log(`Received currentImagesJson: ${currentImagesJson ? 'yes' : 'no'}`);
+    
     if (currentImagesJson) {
       try {
         // Parse the current images JSON
         const parsedImages = JSON.parse(currentImagesJson) as string[];
-
-        // Filter out any data URLs since those will be added from the imageFiles
-        newImages = parsedImages.filter((img) => !img.startsWith("data:"));
+        console.log(`Parsed ${parsedImages.length} images from JSON`);
+        
+        // Process all images from the JSON
+        // Keep non-data URLs (existing images) as is
+        const existingImages = parsedImages.filter(img => !img.startsWith("data:"));
+        // Get all data URLs (new images)
+        const newDataUrls = parsedImages.filter(img => img.startsWith("data:"));
+        
+        console.log(`Existing images: ${existingImages.length}`);
+        console.log(`New data URLs: ${newDataUrls.length}`);
+        
+        // Add all existing images to our final array
+        newImages = [...existingImages];
+        
+        // Process each data URL and add to the images array
+        if (newDataUrls.length > 0) {
+          for (const dataUrl of newDataUrls) {
+            newImages.push(dataUrl);
+          }
+          console.log(`Total images after adding data URLs: ${newImages.length}`);
+        }
       } catch (e) {
         console.error("Error parsing currentImages JSON:", e);
         // Fallback to existing images if parsing fails
@@ -122,19 +141,23 @@ export async function PUT(
           console.error("Error parsing removedImages JSON:", e);
         }
       }
-    }
-
-    // Process each image file
-    if (imageFiles && imageFiles.length > 0) {
-      for (const imageFile of imageFiles) {
-        if (imageFile.size > 0) {
-          const bytes = await imageFile.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          const imageBase64 = `data:${imageFile.type};base64,${buffer.toString("base64")}`;
-          newImages.push(imageBase64);
+      
+      // Process image files if needed (legacy support)
+      const imageFiles = formData.getAll("images") as File[];
+      if (imageFiles && imageFiles.length > 0) {
+        console.log(`Processing ${imageFiles.length} image files from FormData`);
+        for (const imageFile of imageFiles) {
+          if (imageFile.size > 0) {
+            const bytes = await imageFile.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+            const imageBase64 = `data:${imageFile.type};base64,${buffer.toString("base64")}`;
+            newImages.push(imageBase64);
+          }
         }
       }
     }
+
+    console.log(`Final image count to be saved: ${newImages.length}`);
 
     // Validate required fields
     if (!name || !phone) {

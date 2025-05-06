@@ -168,6 +168,11 @@ export default function DeveloperForm({
         setImageError("حدث خطأ أثناء معالجة الصورة");
       }
     }
+    
+    // Clear the file input to prevent duplicate uploads
+    if (e.target) {
+      e.target.value = '';
+    }
   };
 
   const removeImage = (index: number) => {
@@ -198,54 +203,22 @@ export default function DeveloperForm({
       // Add the replaceImages flag
       formData.append("replaceImages", replaceImages.toString());
 
-      // For image handling, we'll take a different approach:
-      // Instead of trying to track removals separately, we'll simply send the current state
-      // of developImages as a serialized array to clearly communicate what images should be kept
-      formData.append("currentImages", JSON.stringify(developImages));
-
-      // Add all NEW images from state that are in base64 format
-      // We only need to add files for newly added images (those starting with data:)
-      const newImagePromises = developImages
-        .filter((image) => image.startsWith("data:"))
-        .map(async (image, index) => {
-          try {
-            // Extract the base64 data without the MIME prefix
-            const base64Data = image.split(",")[1];
-            const imageType = image.split(";")[0].split(":")[1];
-            
-            // Convert base64 to blob more efficiently
-            const byteCharacters = atob(base64Data);
-            const byteArrays = [];
-            
-            // Use smaller chunks for better memory management
-            const chunkSize = 512;
-            for (let offset = 0; offset < byteCharacters.length; offset += chunkSize) {
-              const slice = byteCharacters.slice(offset, offset + chunkSize);
-              
-              const byteNumbers = new Array(slice.length);
-              for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-              }
-              
-              const byteArray = new Uint8Array(byteNumbers);
-              byteArrays.push(byteArray);
-            }
-            
-            const blob = new Blob(byteArrays, { type: 'image/jpeg' });
-            
-            // Further compress the image before upload
-            const compressedBlob = await compressImage(new File([blob], `image-${index}.jpg`, { type: 'image/jpeg' }));
-            const file = new File([compressedBlob], `image-${index}.jpg`, {
-              type: 'image/jpeg',
-            });
-            
-            formData.append("images", file);
-          } catch (err) {
-            console.error("Error processing image:", err);
-          }
-        });
-
-      await Promise.all(newImagePromises);
+      // Deduplicate images
+      const uniqueImages = [...new Set(developImages)];
+      console.log(`Total unique images: ${uniqueImages.length}`);
+      
+      // Split images into existing ones and new ones (data URLs)
+      const existingImages = uniqueImages.filter(img => !img.startsWith('data:'));
+      const newImages = uniqueImages.filter(img => img.startsWith('data:'));
+      
+      console.log(`Existing images: ${existingImages.length}`);
+      console.log(`New images: ${newImages.length}`);
+      
+      // Send the full images array including both existing and new
+      formData.append("currentImages", JSON.stringify(uniqueImages));
+      
+      // Don't do any client-side conversion, send all images in the currentImages JSON
+      // The server will extract the data URLs from currentImages
 
       // If using the onSubmit prop, use it
       if (onSubmit) {
@@ -258,6 +231,9 @@ export default function DeveloperForm({
 
         const method = developer?.id ? "PUT" : "POST";
 
+        console.log(`Submitting to ${url} with method ${method}`);
+        console.log(`FormData has ${formData.getAll('currentImages').length} currentImages entries`);
+
         // Use chunked upload for large payloads
         const response = await axios({
           method,
@@ -268,8 +244,10 @@ export default function DeveloperForm({
           },
           maxContentLength: Infinity,
           maxBodyLength: Infinity,
-          timeout: 60000, // Increase timeout to 60 seconds
+          timeout: 120000, // Increase timeout to 2 minutes for larger uploads
         });
+
+        console.log(`Response received with status: ${response.status}`);
 
         if (response.status === 200 || response.status === 201) {
           toast.success(
