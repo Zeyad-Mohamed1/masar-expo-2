@@ -90,6 +90,10 @@ const HomePage = () => {
     }
   };
 
+  useEffect(() => {
+    fetchDevelopers();
+  }, []);
+
   const handleDeveloperClick = (name: string) => {
     router.push(`/developers/${name}`);
   };
@@ -97,6 +101,11 @@ const HomePage = () => {
   const handleShowMore = () => {
     setVisibleCount((prev) => prev + 4);
   };
+
+  const visibleDevelopers = developers.slice(0, visibleCount);
+  const hasMore = visibleCount < developers.length;
+
+  console.log(developers);
 
   // Render countdown timer
   const renderCountdown = () => {
@@ -158,15 +167,38 @@ const HomePage = () => {
   };
 
   // If event hasn't started and we're not showing developers, only show the countdown
-  if (!eventStarted && !developers.length) {
+  if (!eventStarted) {
     return (
       <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center p-4">
-        <div className="w-full max-w-xl">{renderCountdown()}</div>
+        <div className="flex h-[60vh] w-full max-w-xl flex-col justify-center">
+          {renderCountdown()}
+        </div>
+        <h1 className="mb-6 text-center text-4xl font-bold text-black">
+          مسار إكسبو
+        </h1>
+        <p className="mx-auto mb-12 max-w-3xl text-center text-xl text-gray-700">
+          منصة لعرض مشاريع المطورين العقاريين
+        </p>
+        {loading ? (
+          <div className="flex h-[40vh] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {visibleDevelopers.map((developer) => (
+              <DeveloperCard
+                key={developer.id}
+                developer={developer}
+                handleDeveloperClick={handleDeveloperClick}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   }
 
-  if (loading && eventStarted) {
+  if (loading) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
@@ -174,15 +206,14 @@ const HomePage = () => {
     );
   }
 
-  const visibleDevelopers = developers.slice(0, visibleCount);
-  const hasMore = visibleCount < developers.length;
-
   return (
     <>
       <BannerSection />
 
       <div className="container mx-auto max-w-[90%] py-8">
-        {renderCountdown()}
+        <div className="flex h-[60vh] flex-col justify-center">
+          {renderCountdown()}
+        </div>
 
         <h1 className="mb-6 text-center text-4xl font-bold text-black">
           مسار إكسبو
