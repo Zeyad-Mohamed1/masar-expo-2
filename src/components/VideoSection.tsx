@@ -43,11 +43,6 @@ const VideoSection = ({ videoSrc, imageSrc }: VideoSectionProps) => {
 
   // Determine media source and type
   const mediaSource = data?.aboutImage || videoSrc || imageSrc || "";
-  const isVideo =
-    videoSrc ||
-    mediaSource.includes(".mp4") ||
-    mediaSource.includes(".webm") ||
-    mediaSource.includes(".mov");
 
   return (
     <section className="py-24">
@@ -118,7 +113,7 @@ const VideoSection = ({ videoSrc, imageSrc }: VideoSectionProps) => {
                   onLoad={() => setIsLoading(false)}
                 />
               </div>
-            ) :  (
+            ) : (
               <video
                 ref={videoRef}
                 className="h-full w-full object-cover"

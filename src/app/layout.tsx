@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
@@ -9,7 +10,7 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Masar-Expo",
-  description: "مسار التجارة العقارية",
+  description: "هو أول معرض عقاري مصري أونلاين مخصص بالكامل للعملاء في الخليج. من خلال موقعنا، تقدر تستكشف أفضل المشروعات السكنية والساحلية في مصر، وتتواصل مباشرة مع المطورين، وتحجز وحدتك أونلاين بعروض حصرية وبدون أي مجهود",
 };
 
 export default function RootLayout({
@@ -43,6 +44,7 @@ export default function RootLayout({
           {/* <ClientProvider> */}
           <Navbar />
           {children}
+          <Footer />
           <Toaster position="top-center" />
           {/* </ClientProvider> */}
         </AuthProvider>

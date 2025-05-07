@@ -27,7 +27,7 @@ const HomePage = () => {
 
   // Set a hard-coded future date for the exhibition
   // May 9th, 2024 at 3:00 PM (local time)
-  const targetDate = new Date(2024, 4, 9, 15, 0, 0);
+  const targetDate = new Date(2025, 4, 9, 15, 0, 0);
 
   // Force the date to be in the future for testing
   if (targetDate <= new Date()) {

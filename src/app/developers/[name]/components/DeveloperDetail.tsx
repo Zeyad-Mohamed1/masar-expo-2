@@ -107,9 +107,12 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                   </div>
                   <div className="mr-4">
                     <div className="text-xs text-gray-500">رقم الهاتف</div>
-                    <div className="font-medium text-gray-800">
+                    <a
+                      href={`tel:${developer.phone}`}
+                      className="font-medium text-gray-800 hover:text-red-600 transition-colors"
+                    >
                       {developer.phone}
-                    </div>
+                    </a>
                   </div>
                 </div>
 
@@ -120,6 +123,7 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                     </div>
                   ) : (
                     link && (
+
                       <a
                         href="#"
                         onClick={handleJoinClick}
@@ -131,8 +135,46 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                         </span>
                         <span className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-red-700 to-red-600 transition-transform duration-300 ease-out group-hover:translate-x-0"></span>
                       </a>
+
                     )
                   )}
+                </div>
+                <div className="mt-4">
+                  <p className="mb-4 text-center text-lg font-medium text-gray-800">
+                    تحميل تطبيق زووم للمشاركة في المعرض
+                  </p>
+                  <div className="mt-6 flex justify-center space-x-4 rtl:space-x-reverse">
+                    <a
+                      href="https://apps.apple.com/eg/app/zoom-workplace/id546505307"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 transition-all hover:bg-gray-200"
+                    >
+                      <Image
+                        src="/assets/images/apple-logo.png"
+                        alt="Apple App Store"
+                        width={20}
+                        height={20}
+                        className="h-5 w-5"
+                      />
+                      تحميل زووم للايفون
+                    </a>
+                    <a
+                      href="https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 transition-all hover:bg-gray-200"
+                    >
+                      <Image
+                        src="/assets/images/android-logo.png"
+                        alt="Google Play Store"
+                        width={20}
+                        height={20}
+                        className="h-5 w-5"
+                      />
+                      تحميل زووم للاندرويد
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -197,6 +239,68 @@ const DeveloperDetail = ({ developer }: DeveloperDetailProps) => {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Mobile Join Exhibition Button */}
+        <div className="mt-8 flex justify-center md:hidden">
+          {isLoading && link ? (
+            <div className="flex h-12 w-48 items-center justify-center rounded-md bg-red-600 bg-opacity-90 text-white">
+              <Loader2 className="h-5 w-5 animate-spin" />
+            </div>
+          ) : (
+            link && (
+              <a
+                href="#"
+                onClick={handleJoinClick}
+                className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-md bg-red-600 bg-opacity-90 px-6 py-3 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:bg-opacity-100 hover:shadow-red-500/30"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  انضم الي المعرض
+                  <ExternalLink className="h-5 w-5" />
+                </span>
+                <span className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-red-700 to-red-600 transition-transform duration-300 ease-out group-hover:translate-x-0"></span>
+              </a>
+            )
+          )}
+        </div>
+
+        {/* Download Zoom App Buttons */}
+        <div className="mt-10 md:hidden">
+          <p className="mb-4 text-center text-lg font-medium text-gray-800">
+            تحميل تطبيق زووم للمشاركة في المعرض
+          </p>
+          <div className="mt-6 flex justify-center space-x-4 rtl:space-x-reverse">
+            <a
+              href="https://apps.apple.com/eg/app/zoom-workplace/id546505307"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 transition-all hover:bg-gray-200"
+            >
+              <Image
+                src="/assets/images/apple-logo.png"
+                alt="Apple App Store"
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
+              تحميل زووم للايفون
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=us.zoom.videomeetings"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 transition-all hover:bg-gray-200"
+            >
+              <Image
+                src="/assets/images/android-logo.png"
+                alt="Google Play Store"
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
+              تحميل زووم للاندرويد
+            </a>
           </div>
         </div>
       </div>
